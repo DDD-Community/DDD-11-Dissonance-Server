@@ -26,11 +26,15 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: '17'
-          distribution: 'oracle'
+          distribution: 'temurin'
+          cache: gradle
 
-      # Gradle 설정
+      # Gradle 설정 (캐싱 적용)
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
+        with:
+          arguments: build
+          cache-read-only: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/develop' }}
 
       # Docker Hub 로그인
       - name: Login to Docker Hub
