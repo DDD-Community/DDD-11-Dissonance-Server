@@ -1,0 +1,30 @@
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    hikari:
+      connection-timeout: 2000
+      maximum-pool-size: 5
+    driver-class-name: org.mariadb.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+    defer-datasource-initialization: true
+
+logging:
+  level:
+    org:
+      hibernate:
+        type: trace
+        stat: debug
+        orm:
+          jdbc:
+            bind: trace
+    org.springframework.web.reactive.function.client.ExchangeFunctions: TRACE
+
