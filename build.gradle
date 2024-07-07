@@ -2,6 +2,21 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.3.1'
     id 'io.spring.dependency-management' version '1.1.5'
+    id 'com.google.cloud.tools.jib' version '3.4.2'
+}
+
+jib {
+    from {
+        image = "openjdk:17-jdk-alpine"
+    }
+    to {
+        image = "kikingki/itit"
+        tags = ['latest']
+    }
+    container {
+        environment = [TZ: "Asia/Seoul"]
+        jvmFlags = ['-XX:+UseContainerSupport', '-Dfile.encoding=UTF-8', '-Duser.timezone="Asia/Seoul"']
+    }
 }
 
 group = 'com.dissonance'
