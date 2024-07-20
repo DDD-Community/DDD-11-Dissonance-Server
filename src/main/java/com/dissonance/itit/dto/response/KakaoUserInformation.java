@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.ToString;
 
 @ToString
-@Getter
 public class KakaoUserInformation implements OAuthUserInformation {
     @JsonProperty("id")
     private String providerId;
@@ -32,8 +31,14 @@ public class KakaoUserInformation implements OAuthUserInformation {
     }
 
     @Override
+    public String getProviderId() {
+        return providerId;
+    }
+
+    @Override
     public String getEmail() {
-        return kakaoAccount.getEmail();
+//        return kakaoAccount.getEmail();
+        return "test@gmail.com";        // TODO: 비즈앱 전환 후 이메일 설정
     }
 
     @ToString
@@ -52,5 +57,26 @@ public class KakaoUserInformation implements OAuthUserInformation {
     static class KakaoAccount {
         @JsonProperty(value = "email")
         private String email;
+        @JsonProperty(value = "profile_image_needs_agreement")
+        private Boolean profileImageNeedsAgreement;
+        @JsonProperty(value = "profile_nickname_needs_agreement")
+        private Boolean profileNicknameNeedsAgreement;
+        @JsonProperty(value = "profile")
+        private Profile profile;
+    }
+
+    @ToString
+    @Getter
+    static class Profile {
+        @JsonProperty("nickname")
+        private String nickname;
+        @JsonProperty("profile_image_url")
+        private String profileImage;
+        @JsonProperty("thumbnail_image_url")
+        private String thumbnailImage;
+        @JsonProperty("is_default_image")
+        private Boolean isDefaultImage;
+        @JsonProperty("is_default_nickname")
+        private Boolean isDefaultNickname;
     }
 }

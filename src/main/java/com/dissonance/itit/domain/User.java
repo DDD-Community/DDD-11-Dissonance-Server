@@ -17,7 +17,6 @@ public class User extends BaseTime {
     @Column(name = "id")
     private Long id;
 
-    @Size(max = 255)
     @Column(name = "password")
     private String password;
 
@@ -32,14 +31,11 @@ public class User extends BaseTime {
     private String email;
 
     @Enumerated(EnumType.STRING)
-    @Size(max = 50)
     @NotNull
     @Column(name = "role")
     private Role role;
 
-    @Size(max = 50)
-    @NotNull
-    @Column(name = "providerId")
+    @Column(name = "provider_id")
     private String providerId;
 
     @Size(max = 50)

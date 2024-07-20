@@ -1,7 +1,7 @@
 package com.dissonance.itit.controller;
 
 import com.dissonance.itit.dto.request.OauthTokenReq;
-import com.dissonance.itit.service.OauthService;
+import com.dissonance.itit.dto.response.GeneratedToken;
 import com.dissonance.itit.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -13,13 +13,13 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/oauth")
 public class OauthController {
     private final UserService userService;
-    private final OauthService oauthService;
 
+    // TODO: 커스텀 어노테이션으로 로그인 유저 정보 추출
     @PostMapping("/{provider}")
-    public ResponseEntity<String> getUserInfos(@PathVariable String provider,
+    public ResponseEntity<GeneratedToken> getUserInfos(@PathVariable String provider,
                                                @Valid @RequestBody OauthTokenReq oauthTokenReq) {
-        userService.login(provider, oauthTokenReq.accessToken());
+        GeneratedToken token = userService.login(provider, oauthTokenReq.accessToken());
 
-        return ResponseEntity.ok(oauthService.sendKakaoApiRequest(oauthTokenReq.accessToken()));
+        return ResponseEntity.ok(token);
     }
 }
