@@ -1,0 +1,4 @@
+kakao:
+  api_url:
+    information: https://kapi.kakao.com/v2/user/me
+

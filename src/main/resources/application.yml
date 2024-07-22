@@ -1,3 +1,7 @@
+# TODO: active profile 분리
+cors:
+  allowed-origins: "*"
+
 spring:
   datasource:
     url: ${DB_URL}
@@ -16,6 +20,12 @@ spring:
         format_sql: true
         use_sql_comments: true
     defer-datasource-initialization: true
+  profiles:
+    include: oauth
+
+jwt:
+  token:
+    secret-key: ${JWT_SECRET}
 
 logging:
   level:

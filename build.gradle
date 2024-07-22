@@ -40,6 +40,8 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
@@ -48,6 +50,9 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     implementation 'org.springdoc:springdoc-openapi-starter-common:2.0.2'
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign:4.1.1'
+    implementation 'io.jsonwebtoken:jjwt:0.9.1'
+    implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.1'
 }
 
 tasks.named('test') {
