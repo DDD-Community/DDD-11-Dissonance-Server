@@ -37,8 +37,7 @@ public class KakaoUserInformation implements OAuthUserInformation {
 
     @Override
     public String getEmail() {
-//        return kakaoAccount.getEmail();
-        return "test@gmail.com";        // TODO: 비즈앱 전환 후 이메일 설정
+        return kakaoAccount.getEmail();
     }
 
     @ToString
