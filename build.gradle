@@ -3,6 +3,7 @@ plugins {
     id 'org.springframework.boot' version '3.3.1'
     id 'io.spring.dependency-management' version '1.1.5'
     id 'com.google.cloud.tools.jib' version '3.4.2'
+    id 'jacoco'
 }
 
 jib {
@@ -50,11 +51,70 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     implementation 'org.springdoc:springdoc-openapi-starter-common:2.0.2'
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
-    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign:4.1.1'
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign:4.1.0'
     implementation 'io.jsonwebtoken:jjwt:0.9.1'
     implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.1'
+
+    //QueryDSL
+    implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+    annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
+    annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+    annotationProcessor "jakarta.persistence:jakarta.persistence-api"
 }
+
+def QDomains = []
+for (qPattern in '*.QA'..'*.QZ') {
+    QDomains.add(qPattern + '*')
+}
+
+def jacocoExcludePatterns = [
+        "**/*application*",
+        "**/*config*",
+        "**/*exception*",
+        "**/*request*",
+        "**/*response*",
+        "**/*dto*",
+        "**/*entity*",
+        "**/test/**",
+        "**/resources/**",
+        "**/common/**",
+        "**/domain/**"
+]
 
 tasks.named('test') {
     useJUnitPlatform()
+    finalizedBy 'jacocoTestReport'
+}
+
+def jacocoDir = layout.buildDirectory.dir("reports/")
+
+tasks.register('openJacocoReport', Exec) {
+    doFirst {
+        if (System.getProperty('os.name').toLowerCase().contains('windows')) {
+            commandLine 'cmd', '/c', 'start', 'build/reports/jacoco/index.html/index.html'
+        } else {
+            commandLine 'open', 'build/reports/jacoco/index.html/index.html'
+        }
+    }
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        html.required.set(true)
+        xml.required.set(true)
+        csv.required.set(true)
+        html.destination jacocoDir.get().file("jacoco/index.html").asFile
+        xml.destination jacocoDir.get().file("jacoco/index.xml").asFile
+        csv.destination jacocoDir.get().file("jacoco/index.csv").asFile
+    }
+
+    afterEvaluate {
+        classDirectories.setFrom(
+                files(classDirectories.files.collect {
+                    fileTree(dir: it, excludes: jacocoExcludePatterns + QDomains)
+                })
+        )
+    }
+    finalizedBy openJacocoReport
 }
