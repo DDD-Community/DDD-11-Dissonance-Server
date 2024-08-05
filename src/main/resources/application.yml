@@ -2,6 +2,10 @@
 cors:
   allowed-origins: "*"
 
+server:
+  servlet:
+    context-path: /api/v1
+
 spring:
   datasource:
     url: ${DB_URL}
