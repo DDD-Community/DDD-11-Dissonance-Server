@@ -24,7 +24,7 @@ public class InfoPost extends BaseTime {
     @Column(name = "title")
     private String title;
 
-    @Size(max = 1000)
+    @Size(max = 2000)
     @Column(name = "content")
     private String content;
 
@@ -57,10 +57,6 @@ public class InfoPost extends BaseTime {
     @NotNull
     @Column(name = "organization")
     private String organization;
-
-    @NotNull
-    @Column(name = "recommended")
-    private Boolean recommended = false;
 
     @NotNull
     @Column(name = "reported")
