@@ -1,6 +1,6 @@
 package com.dissonance.itit.repository;
 
-import com.dissonance.itit.domain.User;
+import com.dissonance.itit.domain.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

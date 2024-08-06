@@ -23,11 +23,11 @@ public class SwaggerConfig {
 
         Server prodServer = new Server();
         prodServer.description("Production Server")
-                .url("https://dissonance-server.duckdns.org");
+                .url("https://dissonance-server.duckdns.org/api/v1");
 
         Server devServer = new Server();
         devServer.description("Development Server")
-                .setUrl("http://localhost:8080");
+                .setUrl("http://localhost:8080/api/v1");
 
         SecurityScheme securityScheme = new SecurityScheme()
                 .type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")

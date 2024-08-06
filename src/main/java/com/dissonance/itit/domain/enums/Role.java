@@ -1,4 +1,4 @@
-package com.dissonance.itit.domain;
+package com.dissonance.itit.domain.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,4 +1,4 @@
-package com.dissonance.itit.domain;
+package com.dissonance.itit.domain.entity;
 
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;

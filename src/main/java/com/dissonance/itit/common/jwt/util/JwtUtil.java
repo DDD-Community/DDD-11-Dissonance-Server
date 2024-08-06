@@ -12,8 +12,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Date;
 
-import static com.dissonance.itit.domain.JwtTokenExpiration.ACCESS_TOKEN_EXPIRED_TIME;
-import static com.dissonance.itit.domain.JwtTokenExpiration.REFRESH_TOKEN_EXPIRATION_TIME;
+import static com.dissonance.itit.domain.enums.JwtTokenExpiration.ACCESS_TOKEN_EXPIRED_TIME;
+import static com.dissonance.itit.domain.enums.JwtTokenExpiration.REFRESH_TOKEN_EXPIRATION_TIME;
 
 @Slf4j
 @Service

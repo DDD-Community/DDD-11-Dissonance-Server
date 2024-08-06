@@ -1,8 +1,8 @@
 package com.dissonance.itit.service;
 
 import com.dissonance.itit.common.jwt.util.JwtUtil;
-import com.dissonance.itit.domain.Role;
-import com.dissonance.itit.domain.User;
+import com.dissonance.itit.domain.enums.Role;
+import com.dissonance.itit.domain.entity.User;
 import com.dissonance.itit.dto.response.GeneratedToken;
 import com.dissonance.itit.dto.response.OAuthUserInformation;
 import com.dissonance.itit.repository.UserRepository;
