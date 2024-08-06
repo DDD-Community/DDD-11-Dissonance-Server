@@ -39,7 +39,7 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/api/v1/oauth/**",
+                                .requestMatchers("/**",      // TODO: 토큰 관련 작업 후 security 적용
                                         "/swagger-ui/**",
                                         "/v3/api-docs/**").permitAll()
                                 .anyRequest().authenticated()

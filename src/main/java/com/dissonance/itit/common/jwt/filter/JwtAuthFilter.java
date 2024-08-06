@@ -1,7 +1,7 @@
 package com.dissonance.itit.common.jwt.filter;
 
 import com.dissonance.itit.common.jwt.util.JwtUtil;
-import com.dissonance.itit.domain.User;
+import com.dissonance.itit.domain.entity.User;
 import com.dissonance.itit.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
