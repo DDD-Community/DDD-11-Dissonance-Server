@@ -1,5 +1,7 @@
 package com.dissonance.itit.common.jwt.filter;
 
+import com.dissonance.itit.common.exception.ErrorCode;
+import com.dissonance.itit.common.exception.CustomException;
 import com.dissonance.itit.common.jwt.util.JwtUtil;
 import com.dissonance.itit.domain.entity.User;
 import com.dissonance.itit.repository.UserRepository;
@@ -44,7 +46,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         if (jwtUtil.verifyToken(accessToken)) {
             // AccessToken의 payload에 있는 email로 user를 조회한다.
             User findUser = userRepository.findByEmail(jwtUtil.getUid(accessToken))
-                    .orElseThrow(() -> new IllegalArgumentException("해당 email의 사용자가 존재하지 않습니다."));
+                    .orElseThrow(() -> new CustomException(ErrorCode.NON_EXISTENT_EMAIL));
 
             // SecurityContext에 인증 객체를 등록한다.
             Authentication auth = getAuthentication(findUser);
