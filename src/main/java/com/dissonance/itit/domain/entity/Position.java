@@ -17,8 +17,17 @@ public class Position {
     @Column(name = "id")
     private Integer id;
 
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "info_post_id")
+    private InfoPost infoPost;
+
     @Size(max = 50)
     @NotNull
     @Column(name = "name")
     private String name;
+
+    @NotNull
+    @Column(name = "recruiting_count")
+    private Integer recruitingCount;
 }
