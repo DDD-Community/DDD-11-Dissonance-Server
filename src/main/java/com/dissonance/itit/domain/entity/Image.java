@@ -1,5 +1,6 @@
 package com.dissonance.itit.domain.entity;
 
+import com.dissonance.itit.domain.enums.Directory;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -27,8 +28,9 @@ public class Image {
     @Column(name = "convert_image_name")
     private String convertImageName;
 
+    @Enumerated(EnumType.STRING)
     @Size(max = 20)
     @NotNull
     @Column(name = "directory")
-    private String directory;
+    private Directory directory;
 }
