@@ -29,7 +29,6 @@ public class Image {
     private String convertImageName;
 
     @Enumerated(EnumType.STRING)
-    @Size(max = 20)
     @NotNull
     @Column(name = "directory")
     private Directory directory;
