@@ -1,18 +1,21 @@
 package com.dissonance.itit.dto.request;
 
+import static com.dissonance.itit.common.util.DateUtil.*;
+
+import java.util.List;
+
 import com.dissonance.itit.domain.entity.Category;
 import com.dissonance.itit.domain.entity.Image;
 import com.dissonance.itit.domain.entity.InfoPost;
 import com.dissonance.itit.domain.entity.User;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.Getter;
 
-import java.util.List;
-
-import static com.dissonance.itit.common.util.DateUtil.stringToDate;
-
+@Builder
 public record InfoPostReq (
         @NotBlank(message = "제목은 필수 입력입니다.")
         @Schema(description = "제목", example = "공모전1")
