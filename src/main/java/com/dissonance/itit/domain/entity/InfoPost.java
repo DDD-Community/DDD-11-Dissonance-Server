@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Getter
 @Builder
@@ -34,19 +34,19 @@ public class InfoPost extends BaseTime {
 
     @NotNull
     @Column(name = "recruitment_start_date")
-    private LocalDateTime recruitmentStartDate;
+    private LocalDate recruitmentStartDate;
 
     @NotNull
     @Column(name = "recruitment_end_date")
-    private LocalDateTime recruitmentEndDate;
+    private LocalDate recruitmentEndDate;
 
     @NotNull
     @Column(name = "activity_start_date")
-    private LocalDateTime activityStartDate;
+    private LocalDate activityStartDate;
 
     @NotNull
     @Column(name = "activity_end_date")
-    private LocalDateTime activityEndDate;
+    private LocalDate activityEndDate;
 
     @Size(max = 500)
     @NotNull
@@ -58,13 +58,11 @@ public class InfoPost extends BaseTime {
     @Column(name = "organization")
     private String organization;
 
-    @NotNull
     @Column(name = "reported")
-    private Boolean reported = false;
+    private Boolean reported;
 
-    @NotNull
     @Column(name = "recruitment_closed")
-    private Boolean recruitmentClosed = false;
+    private Boolean recruitmentClosed;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "image_id")

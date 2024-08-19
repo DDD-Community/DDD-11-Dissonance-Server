@@ -10,23 +10,24 @@ import lombok.*;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "position_info_post")
-public class PositionInfoPost {
+@Table(name = "recruitment_position")
+public class RecruitmentPosition {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private Long id;
+    @Column(name = "id")
+    private Integer id;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "info_post_id")
     private InfoPost infoPost;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "position_id")
-    private Position position;
-
     @Size(max = 50)
-    @Column(name = "custom_name", length = 50)
-    private String customName;
+    @NotNull
+    @Column(name = "name")
+    private String name;
+
+    @NotNull
+    @Column(name = "recruiting_count")
+    private Integer recruitingCount;
 }

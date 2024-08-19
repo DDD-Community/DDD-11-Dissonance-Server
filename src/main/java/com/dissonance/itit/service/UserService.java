@@ -63,4 +63,10 @@ public class UserService {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(ErrorCode.NON_EXISTENT_EMAIL));
     }
+
+    @Transactional(readOnly = true)
+    public User findById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.NON_EXISTENT_USER_ID));
+    }
 }
