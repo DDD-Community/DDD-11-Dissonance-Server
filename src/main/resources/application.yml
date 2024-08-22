@@ -26,6 +26,10 @@ spring:
     defer-datasource-initialization: true
   profiles:
     include: oauth
+  servlet:
+    multipart:
+      max-request-size: 10MB
+      max-file-size: 10MB
 
 jwt:
   token:
@@ -37,8 +41,16 @@ logging:
       hibernate:
         type: trace
         stat: debug
-        orm:
-          jdbc:
-            bind: trace
     org.springframework.web.reactive.function.client.ExchangeFunctions: TRACE
 
+cloud:
+  aws:
+    s3:
+      bucket: itit-bucket
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+    credentials:
+      access-key: ${AWS_ACCESS_KEY}
+      secret-key: ${AWS_SECRET_KEY}

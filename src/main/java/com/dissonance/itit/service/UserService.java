@@ -1,5 +1,7 @@
 package com.dissonance.itit.service;
 
+import com.dissonance.itit.common.exception.CustomException;
+import com.dissonance.itit.common.exception.ErrorCode;
 import com.dissonance.itit.common.jwt.util.JwtUtil;
 import com.dissonance.itit.domain.enums.Role;
 import com.dissonance.itit.domain.entity.User;
@@ -28,7 +30,7 @@ public class UserService {
             userInformation = oauthService.requestUserInformation(token);
         } else {
             log.info("존재하지 않는 provider: " + provider);
-            throw new IllegalArgumentException("존재하지 않는 provider: " + provider);
+            throw new CustomException(ErrorCode.INVALID_PROVIDER);
         }
 
         User user;
@@ -59,6 +61,12 @@ public class UserService {
 
     private User findByEmail(String email) {
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("해당 email의 사용자가 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.NON_EXISTENT_EMAIL));
+    }
+
+    @Transactional(readOnly = true)
+    public User findById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.NON_EXISTENT_USER_ID));
     }
 }
