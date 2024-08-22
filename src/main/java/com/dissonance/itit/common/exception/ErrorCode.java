@@ -20,6 +20,7 @@ public enum ErrorCode {
 	IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 id의 이미지가 존재하지 않습니다."),
 	NON_EXISTENT_CATEGORY_ID(HttpStatus.NOT_FOUND, "해당 id의 카테고리가 존재하지 않습니다."),
 	NON_EXISTENT_INFO_POST_ID(HttpStatus.NOT_FOUND, "해당 id의 공고 게시글이 존재하지 않습니다."),
+	REPORTED_INFO_POST_ID(HttpStatus.NOT_FOUND, "해당 id의 게시글은 신고 처리되었습니다."),
 
 	// 500
 	IO_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "파일 입출력 에러");

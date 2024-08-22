@@ -3,6 +3,7 @@ package com.dissonance.itit.controller;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,5 +43,12 @@ public class InfoPostController {
 	public ResponseEntity<InfoPostDetailRes> getInfoPostDetail(@PathVariable Long infoPostId) {
 		InfoPostDetailRes infoPostDetailRes = infoPostService.getInfoPostDetailById(infoPostId);
 		return ResponseEntity.ok(infoPostDetailRes);
+	}
+
+	@PatchMapping("/{infoPostId}/reports")
+	@Operation(summary = "공고 게시글 신고", description = "공고 게시글을 신고 처리합니다. (즉시 반영)")
+	public ResponseEntity<String> reportedInfoPost(@PathVariable Long infoPostId) {
+		Long resultId = infoPostService.reportedInfoPost(infoPostId);
+		return ResponseEntity.ok(resultId + "번 게시글의 신고가 성공적으로 접수되었습니다.");
 	}
 }

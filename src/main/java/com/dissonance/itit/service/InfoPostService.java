@@ -13,11 +13,11 @@ import com.dissonance.itit.domain.entity.Image;
 import com.dissonance.itit.domain.entity.InfoPost;
 import com.dissonance.itit.domain.entity.User;
 import com.dissonance.itit.domain.enums.Directory;
+import com.dissonance.itit.dto.common.PositionInfo;
 import com.dissonance.itit.dto.request.InfoPostReq;
 import com.dissonance.itit.dto.response.InfoPostCreateRes;
 import com.dissonance.itit.dto.response.InfoPostDetailRes;
 import com.dissonance.itit.dto.response.InfoPostDetailRes.InfoPostInfo;
-import com.dissonance.itit.dto.response.InfoPostDetailRes.PositionInfo;
 import com.dissonance.itit.repository.InfoPostRepository;
 import com.dissonance.itit.repository.InfoPostRepositorySupport;
 
@@ -53,9 +53,21 @@ public class InfoPostService {
 			throw new CustomException(ErrorCode.NON_EXISTENT_INFO_POST_ID);
 		}
 
-		List<PositionInfo> positionInfos = infoPostRepositorySupport.findByInfoPostId(
-			infoPostId);    // TODO: 적합한 도메인으로 옮기기
+		if (infoPostInfo.getReported()) {
+			throw new CustomException(ErrorCode.REPORTED_INFO_POST_ID);
+		}
+
+		List<PositionInfo> positionInfos = recruitmentPositionService.findPositionInfosByInfoPostId(
+			infoPostId);
 
 		return InfoPostDetailRes.of(infoPostInfo, positionInfos);
+	}
+
+	@Transactional
+	public Long reportedInfoPost(Long infoPostId) {
+		InfoPost infoPost = infoPostRepository.findById(infoPostId)
+			.orElseThrow(() -> new CustomException(ErrorCode.NON_EXISTENT_INFO_POST_ID));
+		infoPost.updateReported();
+		return infoPost.getId();
 	}
 }

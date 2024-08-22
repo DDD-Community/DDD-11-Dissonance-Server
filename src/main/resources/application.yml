@@ -41,9 +41,6 @@ logging:
       hibernate:
         type: trace
         stat: debug
-        orm:
-          jdbc:
-            bind: trace
     org.springframework.web.reactive.function.client.ExchangeFunctions: TRACE
 
 cloud:
