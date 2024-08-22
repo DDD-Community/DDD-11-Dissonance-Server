@@ -5,6 +5,8 @@ import static com.dissonance.itit.common.util.DateUtil.*;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.dissonance.itit.dto.common.PositionInfo;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,24 +26,18 @@ public class InfoPostDetailRes {
 
 	@Getter
 	@AllArgsConstructor
-	public static class PositionInfo {		// TODO: 아예 독립적인 DTO로 분리하는 쪽이 더 낫겠음
-		String positionName;
-		Integer recruitingCount;
-	}
-
-	@Getter
-	@AllArgsConstructor
 	public static class InfoPostInfo {
-		String title;
-		String categoryName;
-		String organization;
-		LocalDate recruitmentStartDate;
-		LocalDate recruitmentEndDate;
-		LocalDate activityStartDate;
-		LocalDate activityEndDate;
-		String content;
-		String detailUrl;
-		Integer viewCount;
+		private String title;
+		private String categoryName;
+		private String organization;
+		private LocalDate recruitmentStartDate;
+		private LocalDate recruitmentEndDate;
+		private LocalDate activityStartDate;
+		private LocalDate activityEndDate;
+		private String content;
+		private String detailUrl;
+		private Integer viewCount;
+		private Boolean reported;
 	}
 
 	public static InfoPostDetailRes of(InfoPostInfo infoPostInfo, List<PositionInfo> positionInfos) {
@@ -59,4 +55,4 @@ public class InfoPostDetailRes {
 			.viewCount(infoPostInfo.getViewCount())
 			.build();
 	}
-}현
+}
