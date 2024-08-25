@@ -12,6 +12,7 @@ import com.dissonance.itit.domain.entity.User;
 import com.dissonance.itit.domain.enums.Role;
 import com.dissonance.itit.dto.common.PositionInfo;
 import com.dissonance.itit.dto.request.InfoPostReq;
+import com.dissonance.itit.dto.response.InfoPostRes;
 
 public class TestFixture {
 	public static MockMultipartFile getMockMultipartFile() {
@@ -79,47 +80,26 @@ public class TestFixture {
 		);
 	}
 
-	public static List<InfoPost> createMultipleInfoPosts(User author, Image image, Category category) {
-		InfoPostReq infoPostReq1 = InfoPostReq.builder()
-			.title("공고 1")
-			.content("내용 1")
-			.organization("조직 1")
-			.categoryId(4)
-			.activityStartDate("2000년 1월 1일")
-			.activityEndDate("2000년 1월 7일")
-			.recruitmentStartDate("2000년 6월 1일")
-			.recruitmentEndDate("2000년 6월 30일")
-			.detailUrl("https://example.com/1")
-			.build();
-
-		InfoPostReq infoPostReq2 = InfoPostReq.builder()
-			.title("공고 2")
-			.content("내용 2")
-			.organization("조직 2")
-			.categoryId(5)
-			.activityStartDate("2000년 2월 1일")
-			.activityEndDate("2000년 2월 7일")
-			.recruitmentStartDate("2000년 7월 1일")
-			.recruitmentEndDate("2000년 7월 31일")
-			.detailUrl("https://example.com/2")
-			.build();
-
-		InfoPostReq infoPostReq3 = InfoPostReq.builder()
-			.title("공고 3")
-			.content("내용 3")
-			.organization("조직 3")
-			.categoryId(6)
-			.activityStartDate("2000년 3월 1일")
-			.activityEndDate("2000년 3월 7일")
-			.recruitmentStartDate("2000년 8월 1일")
-			.recruitmentEndDate("2000년 8월 31일")
-			.detailUrl("https://example.com/3")
-			.build();
-
-		InfoPost infoPost1 = createInfoPost(infoPostReq1, author, image, category);
-		InfoPost infoPost2 = createInfoPost(infoPostReq2, author, image, category);
-		InfoPost infoPost3 = createInfoPost(infoPostReq3, author, image, category);
-
-		return List.of(infoPost1, infoPost2, infoPost3);
+	public static List<InfoPostRes> createMultipleInfoPostRes() {
+		return List.of(
+			InfoPostRes.builder()
+				.id(1L)
+				.imgUrl("http://example.com/img1.jpg")
+				.title("Post 1")
+				.remainingDays("D-5")
+				.build(),
+			InfoPostRes.builder()
+				.id(2L)
+				.imgUrl("http://example.com/img2.jpg")
+				.title("Post 2")
+				.remainingDays("D-Day")
+				.build(),
+			InfoPostRes.builder()
+				.id(3L)
+				.imgUrl("http://example.com/img3.jpg")
+				.title("Post 3")
+				.remainingDays("D+3")
+				.build()
+		);
 	}
 }

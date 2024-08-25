@@ -1,5 +1,7 @@
 package com.dissonance.itit.controller;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +17,7 @@ import com.dissonance.itit.domain.entity.User;
 import com.dissonance.itit.dto.request.InfoPostReq;
 import com.dissonance.itit.dto.response.InfoPostCreateRes;
 import com.dissonance.itit.dto.response.InfoPostDetailRes;
+import com.dissonance.itit.dto.response.InfoPostRes;
 import com.dissonance.itit.service.InfoPostService;
 import com.dissonance.itit.service.UserService;
 
@@ -50,5 +53,14 @@ public class InfoPostController {
 	public ResponseEntity<String> reportedInfoPost(@PathVariable Long infoPostId) {
 		Long resultId = infoPostService.reportedInfoPost(infoPostId);
 		return ResponseEntity.ok(resultId + "번 게시글의 신고가 성공적으로 접수되었습니다.");
+	}
+
+	@GetMapping("/categories/{categoryId}/posts")
+	@Operation(summary = "공고 게시글 목록 조회", description = "카테고리별 공고 게시글 목록을 조회합니다. (정렬: 최신순 - latest, 마감일순 - deadline)")
+	public ResponseEntity<Page<InfoPostRes>> getInfoPostsByCategory(@PathVariable Integer categoryId,
+		Pageable pageable) {
+		Page<InfoPostRes> infoPostRes = infoPostService.getInfoPostsByCategoryId(categoryId, pageable);
+
+		return ResponseEntity.ok(infoPostRes);
 	}
 }
