@@ -2,6 +2,8 @@ package com.dissonance.itit.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,6 +20,7 @@ import com.dissonance.itit.dto.request.InfoPostReq;
 import com.dissonance.itit.dto.response.InfoPostCreateRes;
 import com.dissonance.itit.dto.response.InfoPostDetailRes;
 import com.dissonance.itit.dto.response.InfoPostDetailRes.InfoPostInfo;
+import com.dissonance.itit.dto.response.InfoPostRes;
 import com.dissonance.itit.repository.InfoPostRepository;
 import com.dissonance.itit.repository.InfoPostRepositorySupport;
 
@@ -69,5 +72,10 @@ public class InfoPostService {
 			.orElseThrow(() -> new CustomException(ErrorCode.NON_EXISTENT_INFO_POST_ID));
 		infoPost.updateReported();
 		return infoPost.getId();
+	}
+
+	@Transactional(readOnly = true)
+	public Page<InfoPostRes> getInfoPostsByCategoryId(Integer categoryId, Pageable pageable) {
+		return infoPostRepositorySupport.findInfoPostsByCategoryId(categoryId, pageable);
 	}
 }
