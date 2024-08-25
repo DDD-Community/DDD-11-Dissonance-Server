@@ -35,7 +35,7 @@ public class InfoPostRes {
 		} else if (daysLeft == 0) {
 			return "D-Day";
 		} else {
-			return "D+" + Math.abs(daysLeft);
+			return "마감";
 		}
 	}
 
