@@ -1,6 +1,7 @@
 package com.dissonance.itit.service;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
 import java.time.LocalDate;
@@ -13,6 +14,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.mock.web.MockMultipartFile;
 
 import com.dissonance.itit.common.exception.CustomException;
@@ -26,6 +31,7 @@ import com.dissonance.itit.dto.common.PositionInfo;
 import com.dissonance.itit.dto.request.InfoPostReq;
 import com.dissonance.itit.dto.response.InfoPostCreateRes;
 import com.dissonance.itit.dto.response.InfoPostDetailRes;
+import com.dissonance.itit.dto.response.InfoPostRes;
 import com.dissonance.itit.fixture.TestFixture;
 import com.dissonance.itit.repository.InfoPostRepository;
 import com.dissonance.itit.repository.InfoPostRepositorySupport;
@@ -162,5 +168,31 @@ public class InfoPostServiceTest {
 		assertThatThrownBy(() -> infoPostService.reportedInfoPost(infoPostId))
 			.isInstanceOf(CustomException.class)
 			.hasMessage(ErrorCode.NON_EXISTENT_INFO_POST_ID.getMessage());
+	}
+
+	@Test
+	@DisplayName("공고 게시글 목록 page 조회")
+	void getInfoPostsByCategoryId_returnInfoPostResPage() {
+		// Given
+		Integer categoryId = 1;
+		Pageable pageable = PageRequest.of(0, 10);
+		List<InfoPostRes> postResList = TestFixture.createMultipleInfoPostRes();
+		Page<InfoPostRes> expectedPage = new PageImpl<>(postResList, pageable, postResList.size());
+
+		given(infoPostRepositorySupport.findInfoPostsByCategoryId(categoryId, pageable)).willReturn(expectedPage);
+
+		// When
+		Page<InfoPostRes> result = infoPostService.getInfoPostsByCategoryId(categoryId, pageable);
+
+		// Then
+		assertThat(result).isNotNull();
+		assertThat(result.getContent()).hasSize(3);
+
+		List<InfoPostRes> content = result.getContent();
+		assertAll(
+			() -> assertThat(content.get(0).getRemainingDays()).isEqualTo("D-5"),
+			() -> assertThat(content.get(1).getRemainingDays()).isEqualTo("D-Day"),
+			() -> assertThat(content.get(2).getRemainingDays()).isEqualTo("D+3")
+		);
 	}
 }
