@@ -13,6 +13,8 @@ public enum ErrorCode {
 	INVALID_FILE_TYPE(HttpStatus.BAD_REQUEST, "파일 형식은 이미지만 가능합니다."),
 	INVALID_FILE_SIZE(HttpStatus.BAD_REQUEST, "파일 용량은 10MB를 넘을 수 없습니다."),
 	INVALID_DATE_FORMAT(HttpStatus.BAD_REQUEST, "날짜 변환에 실패했습니다."),
+	INVALID_APPLE_TOKEN(HttpStatus.BAD_REQUEST, "유효하지 않는 Apple Token입니다."),
+	INVALID_JSON_FORMAT(HttpStatus.BAD_REQUEST, "잘못된 JSON 형식입니다."),
 
 	// 404
 	NON_EXISTENT_USER_ID(HttpStatus.NOT_FOUND, "해당 id의 사용자가 존재하지 않습니다."),
@@ -23,7 +25,8 @@ public enum ErrorCode {
 	REPORTED_INFO_POST_ID(HttpStatus.NOT_FOUND, "해당 id의 게시글은 신고 처리되었습니다."),
 
 	// 500
-	IO_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "파일 입출력 에러");
+	IO_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "파일 입출력 에러"),
+	INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러");
 
 	private final HttpStatus httpStatus;
 	private final String message;
