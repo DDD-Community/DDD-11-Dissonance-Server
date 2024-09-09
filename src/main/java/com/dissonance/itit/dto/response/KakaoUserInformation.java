@@ -1,5 +1,6 @@
 package com.dissonance.itit.dto.response;
 
+import com.dissonance.itit.domain.enums.SocialLoginProvider;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -28,8 +29,8 @@ public class KakaoUserInformation implements OAuthUserInformation {
 	}
 
 	@Override
-	public String getProvider() {
-		return "kakao";
+	public SocialLoginProvider getProvider() {
+		return SocialLoginProvider.KAKAO;
 	}
 
 	@Override
