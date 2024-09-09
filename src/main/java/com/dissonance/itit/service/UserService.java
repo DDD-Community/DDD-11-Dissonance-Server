@@ -12,6 +12,7 @@ import com.dissonance.itit.domain.enums.SocialLoginProvider;
 import com.dissonance.itit.dto.response.GeneratedToken;
 import com.dissonance.itit.dto.response.LoginUserInfoRes;
 import com.dissonance.itit.dto.response.OAuthUserInformation;
+import com.dissonance.itit.factory.OAuthServiceFactory;
 import com.dissonance.itit.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -24,33 +25,22 @@ public class UserService {
 	private final JwtUtil jwtUtil;
 	private final UserRepository userRepository;
 
-	private final KakaoOAuthServiceImpl kakaoOAuthService;
-	private final AppleOAuthServiceImpl appleOAuthService;
+	private final OAuthServiceFactory oAuthServiceFactory;
 
 	@Transactional
 	public GeneratedToken login(String provider, String token) {
-		OAuthUserInformation userInformation;
 		SocialLoginProvider providerEnum = SocialLoginProvider.valueOf(provider.toUpperCase());
+		OAuthService oAuthService = oAuthServiceFactory.getOAuthService(providerEnum);
 
-		if (providerEnum.equals(SocialLoginProvider.APPLE)) {
-			userInformation = appleOAuthService.requestUserInformation(token);
-		} else if (providerEnum.equals(SocialLoginProvider.KAKAO)) {
-			userInformation = kakaoOAuthService.requestUserInformation(token);
-		} else {
-			log.info("존재하지 않는 provider: " + provider);
-			throw new CustomException(ErrorCode.INVALID_PROVIDER);
-		}
+		OAuthUserInformation userInformation = oAuthService.requestUserInformation(token);
 
 		User user;
 
 		if (isExistsByProviderAndProviderId(providerEnum, userInformation.getProviderId())) {
 			log.info("[UserService] login, response: {}", userInformation);
-
 			user = findByEmail(userInformation.getEmail());
-
 		} else {
 			log.info("[UserService] signUp, response: {}", userInformation);
-
 			user = saveUser(userInformation);
 		}
 
