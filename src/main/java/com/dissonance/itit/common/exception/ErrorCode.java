@@ -24,6 +24,9 @@ public enum ErrorCode {
 	NON_EXISTENT_INFO_POST_ID(HttpStatus.NOT_FOUND, "해당 id의 공고 게시글이 존재하지 않습니다."),
 	REPORTED_INFO_POST_ID(HttpStatus.NOT_FOUND, "해당 id의 게시글은 신고 처리되었습니다."),
 
+	// 409
+	ALREADY_REPORTED_POST(HttpStatus.CONFLICT, "이미 신고한 공고입니다."),
+
 	// 500
 	IO_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "파일 입출력 에러"),
 	INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러");

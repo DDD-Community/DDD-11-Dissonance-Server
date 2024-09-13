@@ -66,12 +66,10 @@ public class InfoPostService {
 		return InfoPostDetailRes.of(infoPostInfo, positionInfos);
 	}
 
-	@Transactional
-	public Long reportedInfoPost(Long infoPostId) {
-		InfoPost infoPost = infoPostRepository.findById(infoPostId)
+	@Transactional(readOnly = true)
+	public InfoPost findById(Long infoPostId) {
+		return infoPostRepository.findById(infoPostId)
 			.orElseThrow(() -> new CustomException(ErrorCode.NON_EXISTENT_INFO_POST_ID));
-		infoPost.updateReported();
-		return infoPost.getId();
 	}
 
 	@Transactional(readOnly = true)
