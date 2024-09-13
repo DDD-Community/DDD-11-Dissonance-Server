@@ -20,6 +20,7 @@ import com.dissonance.itit.dto.response.InfoPostCreateRes;
 import com.dissonance.itit.dto.response.InfoPostDetailRes;
 import com.dissonance.itit.dto.response.InfoPostRes;
 import com.dissonance.itit.service.InfoPostService;
+import com.dissonance.itit.service.ReportService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -30,6 +31,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/info-posts")
 public class InfoPostController {
 	private final InfoPostService infoPostService;
+	private final ReportService reportService;
 
 	@PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
 	@Operation(summary = "공고 게시글 등록", description = "공고 게시글을 등록합니다.")
@@ -47,9 +49,9 @@ public class InfoPostController {
 	}
 
 	@PatchMapping("/{infoPostId}/reports")
-	@Operation(summary = "공고 게시글 신고", description = "공고 게시글을 신고 처리합니다. (즉시 반영)")
-	public ResponseEntity<String> reportedInfoPost(@PathVariable Long infoPostId) {
-		Long resultId = infoPostService.reportedInfoPost(infoPostId);
+	@Operation(summary = "공고 게시글 신고", description = "공고 게시글을 신고 처리합니다.")
+	public ResponseEntity<String> reportedInfoPost(@PathVariable Long infoPostId, @CurrentUser User loginUser) {
+		Long resultId = reportService.reportedInfoPost(infoPostId, loginUser);
 		return ResponseEntity.ok(resultId + "번 게시글의 신고가 성공적으로 접수되었습니다.");
 	}
 
