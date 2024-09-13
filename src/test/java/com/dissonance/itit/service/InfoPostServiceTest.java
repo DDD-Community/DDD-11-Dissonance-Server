@@ -137,40 +137,6 @@ public class InfoPostServiceTest {
 	}
 
 	@Test
-	@DisplayName("게시글 신고")
-	void reportedInfoPost_returnInfoPostId() {
-		// given
-		Long infoPostId = 1L;
-		InfoPostReq infoPostReq = TestFixture.createInfoPostReq();
-		User author = TestFixture.createUser();
-		Image image = TestFixture.createImage();
-		Category category = TestFixture.createCategory();
-		InfoPost infoPost = TestFixture.createInfoPost(infoPostReq, author, image, category);
-
-		given(infoPostRepository.findById(infoPostId)).willReturn(Optional.of(infoPost));
-
-		// when
-		Long result = infoPostService.reportedInfoPost(infoPostId);
-
-		// then
-		assertThat(result).isEqualTo(infoPostId);
-		verify(infoPostRepository).findById(infoPostId);
-	}
-
-	@Test
-	@DisplayName("게시글 신고시 존재하지 않는 ID로 조회하여 exception 발생")
-	void reportedInfoPost_throwCustomException_givenNonExistentId() {
-		// given
-		Long infoPostId = 999L;
-		given(infoPostRepository.findById(infoPostId)).willReturn(Optional.empty());
-
-		// when & then
-		assertThatThrownBy(() -> infoPostService.reportedInfoPost(infoPostId))
-			.isInstanceOf(CustomException.class)
-			.hasMessage(ErrorCode.NON_EXISTENT_INFO_POST_ID.getMessage());
-	}
-
-	@Test
 	@DisplayName("공고 게시글 목록 page 조회")
 	void getInfoPostsByCategoryId_returnInfoPostResPage() {
 		// Given
@@ -194,5 +160,18 @@ public class InfoPostServiceTest {
 			() -> assertThat(content.get(1).getRemainingDays()).isEqualTo("D-Day"),
 			() -> assertThat(content.get(2).getRemainingDays()).isEqualTo("D+3")
 		);
+	}
+
+	@Test
+	@DisplayName("존재하지 않는 ID로 조회하여 exception 발생")
+	void findById_throwCustomException_givenNonExistentId() {
+		// given
+		Long infoPostId = 999L;
+		given(infoPostRepository.findById(infoPostId)).willReturn(Optional.empty());
+
+		// when & then
+		assertThatThrownBy(() -> infoPostService.findById(infoPostId))
+			.isInstanceOf(CustomException.class)
+			.hasMessage(ErrorCode.NON_EXISTENT_INFO_POST_ID.getMessage());
 	}
 }

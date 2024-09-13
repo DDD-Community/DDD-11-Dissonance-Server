@@ -2,3 +2,6 @@ kakao:
   api_url:
     information: https://kapi.kakao.com/v2/user/me
 
+apple:
+  api_url:
+    information: https://appleid.apple.com/auth/keys
