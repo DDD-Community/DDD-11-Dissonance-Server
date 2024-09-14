@@ -17,7 +17,8 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.dissonance.itit.common.jwt.filter.JwtAuthFilter;
-import com.dissonance.itit.common.jwt.filter.JwtExceptionFilter;
+import com.dissonance.itit.common.jwt.handler.JwtAccessDeniedHandler;
+import com.dissonance.itit.common.jwt.handler.RestAuthenticationEntryPoint;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,7 +30,8 @@ public class SecurityConfig {
 	String[] corsOrigins;
 
 	private final JwtAuthFilter jwtAuthFilter;
-	private final JwtExceptionFilter jwtExceptionFilter;
+	private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+	private final RestAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -49,7 +51,10 @@ public class SecurityConfig {
 					.anyRequest().authenticated()
 			)
 			.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-			.addFilterBefore(jwtExceptionFilter, JwtAuthFilter.class)
+			.exceptionHandling(handler -> handler
+				.authenticationEntryPoint(jwtAuthenticationEntryPoint)
+				.accessDeniedHandler(jwtAccessDeniedHandler)
+			)
 			.build();
 	}
 

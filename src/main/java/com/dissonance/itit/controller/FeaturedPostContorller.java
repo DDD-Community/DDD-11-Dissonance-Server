@@ -2,11 +2,11 @@ package com.dissonance.itit.controller;
 
 import java.util.List;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.dissonance.itit.common.util.ApiResponse;
 import com.dissonance.itit.dto.response.FeaturedPostRes;
 import com.dissonance.itit.service.FeaturedPostService;
 
@@ -21,8 +21,9 @@ public class FeaturedPostContorller {
 
 	@GetMapping
 	@Operation(summary = "추천 게시글 조회", description = "운영진 추천 게시글 5개를 조회합니다.")
-	public ResponseEntity<List<FeaturedPostRes>> getFeaturedPosts() {
+	public ApiResponse<List<FeaturedPostRes>> getFeaturedPosts() {
 		List<FeaturedPostRes> featuredPostRes = featuredPostService.getFeaturedPost();
-		return ResponseEntity.ok(featuredPostRes);
+
+		return ApiResponse.success(featuredPostRes);
 	}
 }
