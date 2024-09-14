@@ -1,12 +1,17 @@
 package com.dissonance.itit.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dissonance.itit.common.annotation.CurrentUser;
 import com.dissonance.itit.common.util.ApiResponse;
 import com.dissonance.itit.domain.entity.User;
+import com.dissonance.itit.dto.request.RefreshTokenReq;
+import com.dissonance.itit.dto.response.GeneratedToken;
 import com.dissonance.itit.dto.response.LoginUserInfoRes;
 import com.dissonance.itit.service.UserService;
 
@@ -25,5 +30,23 @@ public class UserController {
 		LoginUserInfoRes userInfoRes = userService.getUserInfo(loginUser);
 
 		return ApiResponse.success(userInfoRes);
+	}
+
+	@PostMapping("reissue")
+	@Operation(summary = "토큰 재발급", description = "access token과 refresh token을 재발급합니다.")
+	public ApiResponse<GeneratedToken> reissue(@RequestHeader("Authorization") String requestAccessToken,
+		@RequestBody RefreshTokenReq tokenRequest) {
+		GeneratedToken reissuedToken = userService.accessTokenByRefreshToken(requestAccessToken,
+			tokenRequest.refreshToken());
+
+		return ApiResponse.success(reissuedToken);
+	}
+
+	@GetMapping("/logout")
+	@Operation(summary = "로그아웃", description = "access token을 만료시킵니다.")
+	public ApiResponse<String> logout(@RequestHeader("Authorization") String requestAccessToken) {
+		userService.logout(requestAccessToken);
+
+		return ApiResponse.success("logout success");
 	}
 }

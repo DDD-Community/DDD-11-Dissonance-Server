@@ -23,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class UserService {
 	private final JwtUtil jwtUtil;
+	private final RedisService redisService;
 	private final UserRepository userRepository;
 
 	private final OAuthServiceFactory oAuthServiceFactory;
@@ -78,5 +79,33 @@ public class UserService {
 
 	private boolean isAdmin(User loginUser) {
 		return loginUser.getRole().equals(Role.ADMIN);
+	}
+
+	public GeneratedToken accessTokenByRefreshToken(String accessTokenHeader, String refreshToken) {
+		String accessToken = jwtUtil.resolveToken(accessTokenHeader);
+
+		String uid = jwtUtil.getUid(accessToken);
+		String data = redisService.getValues(uid);
+
+		if (data == null || !data.equals(refreshToken)) {
+			log.info("Invalid Token");
+			throw new CustomException(ErrorCode.UNAUTHORIZED_REFRESH_TOKEN);
+		}
+		String role = jwtUtil.getRole(accessToken);
+
+		return jwtUtil.generateToken(uid, role);
+	}
+
+	@Transactional
+	public void logout(String accessTokenHeader) {
+		String accessToken = jwtUtil.resolveToken(accessTokenHeader);
+
+		jwtUtil.verifyToken(accessToken);
+
+		String uid = jwtUtil.getUid(accessToken);
+		long time = jwtUtil.getExpiration(accessToken);
+
+		redisService.setValuesWithTimeout(accessToken, "logout", time);
+		redisService.deleteValues(uid);
 	}
 }
