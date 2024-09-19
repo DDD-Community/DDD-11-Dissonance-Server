@@ -45,7 +45,7 @@ public class JwtUtil {
 	}
 
 	public GeneratedToken generateToken(String email, String role) {
-		String refreshToken = generateRefreshToken(email, role);
+		String refreshToken = generateRefreshToken();
 		String accessToken = generateAccessToken(email, role);
 
 		redisService.setValuesWithTimeout(email, refreshToken, REFRESH_TOKEN_EXPIRATION_TIME.getValue());
@@ -56,15 +56,10 @@ public class JwtUtil {
 			.build();
 	}
 
-	public String generateRefreshToken(String email, String role) {
-		// Claim에 이메일, 권한 세팅
-		Claims claims = Jwts.claims().setSubject(email);
-		claims.put("role", role);
-
+	public String generateRefreshToken() {
 		Date now = new Date();
 
 		return Jwts.builder()
-			.setClaims(claims)
 			.setIssuedAt(now)   // 발행일자
 			.setExpiration(new Date(now.getTime() + REFRESH_TOKEN_EXPIRATION_TIME.getValue()))     // 만료 일시
 			.signWith(SignatureAlgorithm.HS256, secretKey)      // HS256 알고리즘과 secretKey로 서명
