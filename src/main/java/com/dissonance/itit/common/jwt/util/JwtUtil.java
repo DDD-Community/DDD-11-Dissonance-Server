@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.dissonance.itit.domain.entity.UserDetailsImpl;
 import com.dissonance.itit.dto.response.GeneratedToken;
+import com.dissonance.itit.service.RedisService;
 import com.dissonance.itit.service.UserDetailsServiceImpl;
 
 import io.jsonwebtoken.Claims;
@@ -36,9 +37,7 @@ public class JwtUtil {
 	private String secretKey;
 
 	private final UserDetailsServiceImpl userDetailsService;
-
-	// TODO: redis를 이용한 refresh token 재발급 구현
-	//    private final RedisService redisService;
+	private final RedisService redisService;
 
 	@PostConstruct
 	protected void init() {
@@ -46,8 +45,10 @@ public class JwtUtil {
 	}
 
 	public GeneratedToken generateToken(String email, String role) {
-		String refreshToken = generateRefreshToken(email, role);
+		String refreshToken = generateRefreshToken();
 		String accessToken = generateAccessToken(email, role);
+
+		redisService.setValuesWithTimeout(email, refreshToken, REFRESH_TOKEN_EXPIRATION_TIME.getValue());
 
 		return GeneratedToken.builder()
 			.accessToken(accessToken)
@@ -55,15 +56,10 @@ public class JwtUtil {
 			.build();
 	}
 
-	public String generateRefreshToken(String email, String role) {
-		// Claim에 이메일, 권한 세팅
-		Claims claims = Jwts.claims().setSubject(email);
-		claims.put("role", role);
-
+	public String generateRefreshToken() {
 		Date now = new Date();
 
 		return Jwts.builder()
-			.setClaims(claims)
 			.setIssuedAt(now)   // 발행일자
 			.setExpiration(new Date(now.getTime() + REFRESH_TOKEN_EXPIRATION_TIME.getValue()))     // 만료 일시
 			.signWith(SignatureAlgorithm.HS256, secretKey)      // HS256 알고리즘과 secretKey로 서명
@@ -86,9 +82,9 @@ public class JwtUtil {
 
 	public boolean verifyToken(String token) {
 		try {
-			//            if (redisService.getValues(token) != null && redisService.getValues(token).equals("logout")) {
-			//                throw new JwtException("Invalid JWT Token - logout");
-			//            }
+			if (redisService.getValues(token) != null && redisService.getValues(token).equals("logout")) {
+				throw new JwtException("Invalid JWT Token - logout");
+			}
 			Jws<Claims> claims = Jwts.parser()
 				.setSigningKey(secretKey)
 				.parseClaimsJws(token);
