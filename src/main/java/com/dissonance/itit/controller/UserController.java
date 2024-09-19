@@ -1,5 +1,6 @@
 package com.dissonance.itit.controller;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -47,6 +48,14 @@ public class UserController {
 	public ApiResponse<String> logout(@RequestHeader("Authorization") String requestAccessToken) {
 		userService.logout(requestAccessToken);
 
-		return ApiResponse.success("logout success");
+		return ApiResponse.success("로그아웃되었습니다.");
+	}
+
+	@DeleteMapping
+	@Operation(summary = "회원 탈퇴", description = "로그인 유저의 계정을 탈퇴시킵니다.")
+	public ApiResponse<String> withdraw(@CurrentUser User loginUser) {
+		userService.withdraw(loginUser.getId());
+
+		return ApiResponse.success("회원 탈퇴가 완료되었습니다.");
 	}
 }

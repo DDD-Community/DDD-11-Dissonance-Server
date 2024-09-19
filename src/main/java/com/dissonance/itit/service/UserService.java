@@ -108,4 +108,9 @@ public class UserService {
 		redisService.setValuesWithTimeout(accessToken, "logout", time);
 		redisService.deleteValues(uid);
 	}
+
+	@Transactional
+	public void withdraw(Long loginUserId) {
+		userRepository.deleteById(loginUserId);
+	}
 }
