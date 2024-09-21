@@ -43,7 +43,8 @@ public class InfoPostRepositorySupport {
 				infoPost.content.as("content"),
 				infoPost.detailUrl.as("detailUrl"),
 				infoPost.viewCount.as("viewCount"),
-				infoPost.reported.as("reported")
+				infoPost.reported.as("reported"),
+				infoPost.image.imageUrl.as("imageUrl")
 			))
 			.from(infoPost)
 			.where(infoPost.id.eq(infoPostId))

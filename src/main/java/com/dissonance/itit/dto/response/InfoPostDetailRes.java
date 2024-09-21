@@ -23,6 +23,7 @@ public class InfoPostDetailRes {
 	private final String content;
 	private final String detailUrl;
 	private final Integer viewCount;
+	private final String imageUrl;
 
 	@Getter
 	@AllArgsConstructor
@@ -38,6 +39,7 @@ public class InfoPostDetailRes {
 		private String detailUrl;
 		private Integer viewCount;
 		private Boolean reported;
+		private final String imageUrl;
 	}
 
 	public static InfoPostDetailRes of(InfoPostInfo infoPostInfo, List<PositionInfo> positionInfos) {
@@ -52,6 +54,7 @@ public class InfoPostDetailRes {
 				formatPeriod(infoPostInfo.getActivityStartDate(), infoPostInfo.getActivityEndDate()))
 			.content(infoPostInfo.getContent() == null ? "" : infoPostInfo.getContent())
 			.detailUrl(infoPostInfo.getDetailUrl())
+			.imageUrl(infoPostInfo.getImageUrl())
 			.viewCount(infoPostInfo.getViewCount())
 			.build();
 	}
