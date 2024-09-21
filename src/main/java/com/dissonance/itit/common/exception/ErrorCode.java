@@ -15,6 +15,9 @@ public enum ErrorCode {
 	INVALID_APPLE_TOKEN(HttpStatus.BAD_REQUEST, "유효하지 않는 Apple Token입니다."),
 	INVALID_JSON_FORMAT(HttpStatus.BAD_REQUEST, "잘못된 JSON 형식입니다."),
 
+	// 403
+	UNAUTHORIZED_REFRESH_TOKEN(HttpStatus.FORBIDDEN, "권한없는 Refresh Token입니다."),
+
 	// 404
 	NON_EXISTENT_USER_ID(HttpStatus.NOT_FOUND, "해당 id의 사용자가 존재하지 않습니다."),
 	NON_EXISTENT_EMAIL(HttpStatus.NOT_FOUND, "해당 email의 사용자가 존재하지 않습니다."),
