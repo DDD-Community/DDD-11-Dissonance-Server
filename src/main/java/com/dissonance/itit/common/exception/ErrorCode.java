@@ -11,7 +11,6 @@ public enum ErrorCode {
 	// 400
 	INVALID_PROVIDER(HttpStatus.BAD_REQUEST, "존재하지 않는 Provider입니다."),
 	INVALID_FILE_TYPE(HttpStatus.BAD_REQUEST, "파일 형식은 이미지만 가능합니다."),
-	INVALID_FILE_SIZE(HttpStatus.BAD_REQUEST, "파일 용량은 10MB를 넘을 수 없습니다."),
 	INVALID_DATE_FORMAT(HttpStatus.BAD_REQUEST, "날짜 변환에 실패했습니다."),
 	INVALID_APPLE_TOKEN(HttpStatus.BAD_REQUEST, "유효하지 않는 Apple Token입니다."),
 	INVALID_JSON_FORMAT(HttpStatus.BAD_REQUEST, "잘못된 JSON 형식입니다."),
