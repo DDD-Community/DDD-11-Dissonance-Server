@@ -79,34 +79,31 @@ public class InfoPostRepositorySupport {
 		List<OrderSpecifier<?>> orderSpecifiers = new ArrayList<>();
 
 		for (Sort.Order order : sort) {
-			OrderSpecifier<?> orderSpecifier = null;
+			OrderSpecifier<?> idSort = null;
+
+			LocalDate currentDate = LocalDate.now();
+
+			OrderSpecifier<?> prioritySort = new OrderSpecifier<>(
+				Order.DESC,
+				Expressions.booleanTemplate("CASE WHEN {0} >= {1} THEN 1 ELSE 0 END",
+					infoPost.recruitmentEndDate, currentDate)
+			);
+
+			orderSpecifiers.add(prioritySort);
 
 			switch (order.getProperty()) {
 				case "latest":
-					orderSpecifier = new OrderSpecifier<>(Order.DESC, infoPost.id);
+					idSort = new OrderSpecifier<>(Order.DESC, infoPost.id);
+					orderSpecifiers.add(idSort);
 					break;
 				case "deadline":
-					// recruitmentEndDate가 현재 날짜보다 크거나 같은 게시글을 먼저 정렬
-					LocalDate currentDate = LocalDate.now();
-
-					// 정렬 기준 추가: 현재 날짜보다 크거나 같은 날짜는 우선순위가 높음
-					OrderSpecifier<?> prioritySort = new OrderSpecifier<>(
-						Order.DESC,
-						Expressions.booleanTemplate("CASE WHEN {0} >= {1} THEN 1 ELSE 0 END",
-							infoPost.recruitmentEndDate, currentDate)
-					);
-
-					// 기본 정렬: recruitmentEndDate 내림차순
-					OrderSpecifier<?> dateSort = new OrderSpecifier<>(Order.DESC, infoPost.recruitmentEndDate);
-
-					// 두 개의 정렬 기준을 조합
-					orderSpecifiers.add(prioritySort);
+					OrderSpecifier<?> dateSort = new OrderSpecifier<>(Order.ASC, infoPost.recruitmentEndDate);
 					orderSpecifiers.add(dateSort);
 					break;
 			}
 
-			if (orderSpecifier != null) {
-				orderSpecifiers.add(orderSpecifier);
+			if (idSort != null) {
+				orderSpecifiers.add(idSort);
 			}
 		}
 
