@@ -72,6 +72,14 @@ public class TestFixture {
 			.build();
 	}
 
+	public static InfoPost createInfoPostWithImage(Image image) {
+		return InfoPost.builder()
+			.id(1L)
+			.title("Post 1")
+			.image(image)
+			.build();
+	}
+
 	public static List<PositionInfo> createMultiplePositionInfos() {
 		return List.of(
 			new PositionInfo("개발자", 0),

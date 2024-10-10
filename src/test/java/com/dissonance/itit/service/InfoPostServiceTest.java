@@ -88,7 +88,7 @@ public class InfoPostServiceTest {
 			"Title", "Category", "Organization",
 			LocalDate.now(), LocalDate.now().plusDays(5),
 			LocalDate.now(), LocalDate.now().plusMonths(1),
-			"Content", "www.detailUrl.com", 100, false);
+			"Content", "www.detailUrl.com", 100, false, "www.imageUrl.com");
 
 		List<PositionInfo> positionInfos = TestFixture.createMultiplePositionInfos();
 
@@ -126,7 +126,7 @@ public class InfoPostServiceTest {
 			"Title", "Category", "Organization",
 			LocalDate.now(), LocalDate.now().plusDays(5),
 			LocalDate.now(), LocalDate.now().plusMonths(1),
-			"Content", "www.detailUrl.com", 100, true);
+			"Content", "www.detailUrl.com", 100, true, "www.imageUrl.com");
 
 		given(infoPostRepositorySupport.findById(infoPostId)).willReturn(reportedInfoPost);
 
@@ -171,6 +171,37 @@ public class InfoPostServiceTest {
 
 		// when & then
 		assertThatThrownBy(() -> infoPostService.findById(infoPostId))
+			.isInstanceOf(CustomException.class)
+			.hasMessage(ErrorCode.NON_EXISTENT_INFO_POST_ID.getMessage());
+	}
+
+	@Test
+	@DisplayName("InfoPost 삭제 성공")
+	void deleteInfoPostById_success() {
+		// given
+		Long infoPostId = 1L;
+		Image image = TestFixture.createImage();
+		InfoPost infoPost = TestFixture.createInfoPostWithImage(image);
+
+		given(infoPostRepository.findById(infoPostId)).willReturn(Optional.of(infoPost));
+
+		// when
+		infoPostService.deleteInfoPostById(infoPostId);
+
+		// then
+		verify(imageService).delete(infoPost.getImage());
+		verify(infoPostRepository).deleteById(infoPostId);
+	}
+
+	@Test
+	@DisplayName("존재하지 않는 ID로 InfoPost 삭제 시도시 CustomException 발생")
+	void deleteInfoPostById_throwCustomException_givenNonExistentId() {
+		// given
+		Long infoPostId = 999L;
+		given(infoPostRepository.findById(infoPostId)).willReturn(Optional.empty());
+
+		// when & then
+		assertThatThrownBy(() -> infoPostService.deleteInfoPostById(infoPostId))
 			.isInstanceOf(CustomException.class)
 			.hasMessage(ErrorCode.NON_EXISTENT_INFO_POST_ID.getMessage());
 	}
