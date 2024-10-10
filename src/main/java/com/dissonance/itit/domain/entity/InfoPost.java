@@ -38,7 +38,7 @@ public class InfoPost extends BaseTime {
 	@Column(name = "title")
 	private String title;
 
-	@Size(max = 2000)
+	@Size(max = 4000)
 	@Column(name = "content")
 	private String content;
 
@@ -67,7 +67,7 @@ public class InfoPost extends BaseTime {
 	@Column(name = "detail_url")
 	private String detailUrl;
 
-	@Size(max = 50)
+	@Size(max = 100)
 	@Column(name = "organization")
 	private String organization;
 
@@ -77,7 +77,7 @@ public class InfoPost extends BaseTime {
 	@Column(name = "recruitment_closed")
 	private Boolean recruitmentClosed;
 
-	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "image_id")
 	private Image image;
 
@@ -88,8 +88,4 @@ public class InfoPost extends BaseTime {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "category_id")
 	private Category category;
-
-	public void updateReported() {
-		this.reported = true;
-	}
 }

@@ -2,28 +2,21 @@ package com.dissonance.itit.controller;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.dissonance.itit.common.annotation.CurrentUser;
 import com.dissonance.itit.common.util.ApiResponse;
 import com.dissonance.itit.domain.entity.User;
-import com.dissonance.itit.dto.request.InfoPostReq;
-import com.dissonance.itit.dto.response.InfoPostCreateRes;
 import com.dissonance.itit.dto.response.InfoPostDetailRes;
 import com.dissonance.itit.dto.response.InfoPostRes;
 import com.dissonance.itit.service.InfoPostService;
 import com.dissonance.itit.service.ReportService;
 
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -32,14 +25,6 @@ import lombok.RequiredArgsConstructor;
 public class InfoPostController {
 	private final InfoPostService infoPostService;
 	private final ReportService reportService;
-
-	@PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
-	@Operation(summary = "공고 게시글 등록", description = "공고 게시글을 등록합니다.")
-	public ApiResponse<InfoPostCreateRes> createInfoPost(@RequestPart MultipartFile imgFile,
-		@Valid @RequestPart InfoPostReq infoPostReq, @CurrentUser User loginUser) {
-		InfoPostCreateRes infoPostCreateRes = infoPostService.createInfoPost(imgFile, infoPostReq, loginUser);
-		return ApiResponse.success(infoPostCreateRes);
-	}
 
 	@GetMapping("/{infoPostId}")
 	@Operation(summary = "공고 게시글 조회", description = "공고 게시글을 상세 조회합니다.")
