@@ -76,4 +76,12 @@ public class InfoPostService {
 	public Page<InfoPostRes> getInfoPostsByCategoryId(Integer categoryId, Pageable pageable) {
 		return infoPostRepositorySupport.findInfoPostsByCategoryId(categoryId, pageable);
 	}
+
+	@Transactional
+	public void deleteInfoPostById(Long infoPostId) {
+		InfoPost infoPost = findById(infoPostId);
+		imageService.delete(infoPost.getImage());
+
+		infoPostRepository.deleteById(infoPostId);
+	}
 }

@@ -44,10 +44,13 @@ public class SecurityConfig {
 			)
 			.authorizeHttpRequests(authorizeRequests ->
 				authorizeRequests
-					.requestMatchers("/oauth/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-					.requestMatchers(HttpMethod.POST, "/info-posts").hasRole("ADMIN")
+					.requestMatchers("/oauth/**",
+						"/swagger-ui/**",
+						"/v3/api-docs/**",
+						"/info-posts/**",
+						"/featured-posts/**").permitAll()
+					.requestMatchers("/admin/info-posts/**").hasRole("ADMIN")
 					.requestMatchers(HttpMethod.PATCH, "/info-posts/{infoPostId}/reports").authenticated()
-					.requestMatchers("/info-posts/**", "/featured-posts/**").permitAll()
 					.anyRequest().authenticated()
 			)
 			.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
