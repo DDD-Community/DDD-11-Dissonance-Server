@@ -27,7 +27,6 @@ import com.dissonance.itit.domain.entity.Image;
 import com.dissonance.itit.domain.entity.InfoPost;
 import com.dissonance.itit.domain.entity.User;
 import com.dissonance.itit.domain.enums.Directory;
-import com.dissonance.itit.dto.common.PositionInfo;
 import com.dissonance.itit.dto.request.InfoPostReq;
 import com.dissonance.itit.dto.response.InfoPostCreateRes;
 import com.dissonance.itit.dto.response.InfoPostDetailRes;
@@ -90,9 +89,9 @@ public class InfoPostServiceTest {
 			LocalDate.now(), LocalDate.now().plusMonths(1),
 			"Content", "www.detailUrl.com", 100, false, "www.imageUrl.com");
 
-		List<PositionInfo> positionInfos = TestFixture.createMultiplePositionInfos();
+		List<String> positionInfos = TestFixture.createMultiplePositionInfos();
 
-		given(infoPostRepositorySupport.findById(infoPostId)).willReturn(infoPostInfo);
+		given(infoPostRepositorySupport.findInfoPostWithDetails(infoPostId)).willReturn(infoPostInfo);
 		given(recruitmentPositionService.findPositionInfosByInfoPostId(infoPostId)).willReturn(positionInfos);
 
 		// when
@@ -109,7 +108,7 @@ public class InfoPostServiceTest {
 	void getInfoPostDetailById_throwCustomException_givenNonExistentId() {
 		// given
 		Long infoPostId = 999L;
-		given(infoPostRepositorySupport.findById(infoPostId)).willReturn(null);
+		given(infoPostRepositorySupport.findInfoPostWithDetails(infoPostId)).willReturn(null);
 
 		// when & then
 		assertThatThrownBy(() -> infoPostService.getInfoPostDetailById(infoPostId))
@@ -128,7 +127,7 @@ public class InfoPostServiceTest {
 			LocalDate.now(), LocalDate.now().plusMonths(1),
 			"Content", "www.detailUrl.com", 100, true, "www.imageUrl.com");
 
-		given(infoPostRepositorySupport.findById(infoPostId)).willReturn(reportedInfoPost);
+		given(infoPostRepositorySupport.findInfoPostWithDetails(infoPostId)).willReturn(reportedInfoPost);
 
 		// when & then
 		assertThatThrownBy(() -> infoPostService.getInfoPostDetailById(infoPostId))

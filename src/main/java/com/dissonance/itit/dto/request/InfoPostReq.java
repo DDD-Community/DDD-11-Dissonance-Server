@@ -8,7 +8,6 @@ import com.dissonance.itit.domain.entity.Category;
 import com.dissonance.itit.domain.entity.Image;
 import com.dissonance.itit.domain.entity.InfoPost;
 import com.dissonance.itit.domain.entity.User;
-import com.dissonance.itit.dto.common.PositionInfo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -23,21 +22,19 @@ public record InfoPostReq(
 	@NotNull(message = "카테고리 id는 필수 입력입니다.")
 	@Schema(description = "공고 카테고리 id", example = "3")
 	Integer categoryId,
+	@NotBlank(message = "모집 기관, 단체는 필수 입력입니다.")
 	@Schema(description = "모집 기관 or 단체", example = "DDD")
 	String organization,
-	@NotBlank(message = "모집 시작일은 필수 입력입니다.")
 	@Schema(description = "모집 시작 일자", example = "2024년 8월 10일")
 	String recruitmentStartDate,
-	@NotBlank(message = "모집 마감일은 필수 입력입니다.")
 	@Schema(description = "모집 종료 일자", example = "2024년 8월 18일")
 	String recruitmentEndDate,
-	List<PositionInfo> positionInfos,
-	@NotBlank(message = "활동 시작일은 필수 입력입니다.")
+	List<String> positionInfos,
 	@Schema(description = "활동 시작 일자", example = "2024년 10월 1일")
 	String activityStartDate,
-	@NotBlank(message = "활동 종료일은 필수 입력입니다.")
 	@Schema(description = "활동 종료 일자", example = "2024년 12월 31일")
 	String activityEndDate,
+	@NotBlank(message = "활동 내용은 필수 입력입니다.")
 	@Schema(description = "활동 내용", example = "여러분의 창의력과 디자인 역량을 발휘해볼 특별한 기회를 놓치지 마세요")
 	String content,
 	@NotBlank(message = "공고 url은 필수 입력입니다.")

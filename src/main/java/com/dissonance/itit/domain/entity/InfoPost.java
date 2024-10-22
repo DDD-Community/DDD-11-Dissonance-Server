@@ -46,19 +46,15 @@ public class InfoPost extends BaseTime {
 	@Column(name = "view_count")
 	private Integer viewCount;
 
-	@NotNull
 	@Column(name = "recruitment_start_date")
 	private LocalDate recruitmentStartDate;
 
-	@NotNull
 	@Column(name = "recruitment_end_date")
 	private LocalDate recruitmentEndDate;
 
-	@NotNull
 	@Column(name = "activity_start_date")
 	private LocalDate activityStartDate;
 
-	@NotNull
 	@Column(name = "activity_end_date")
 	private LocalDate activityEndDate;
 
@@ -68,6 +64,7 @@ public class InfoPost extends BaseTime {
 	private String detailUrl;
 
 	@Size(max = 100)
+	@NotNull
 	@Column(name = "organization")
 	private String organization;
 

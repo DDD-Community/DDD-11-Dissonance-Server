@@ -20,12 +20,11 @@ public class RecruitmentPositionService {
 	private final RecruitmentPositionRepositorySupport recruitmentPositionRepositorySupport;
 
 	@Transactional
-	public void addPositions(InfoPost infoPost, List<PositionInfo> positionInfos) {
+	public void addPositions(InfoPost infoPost, List<String> positionInfos) {
 		positionInfos.forEach(positionInfo -> {
 			RecruitmentPosition newRecruitmentPosition = RecruitmentPosition.builder()
 				.infoPost(infoPost)
-				.name(positionInfo.positionName())
-				.recruitingCount(positionInfo.recruitingCount())
+				.name(positionInfo)
 				.build();
 			recruitmentPositionRepository.save(newRecruitmentPosition);
 		});

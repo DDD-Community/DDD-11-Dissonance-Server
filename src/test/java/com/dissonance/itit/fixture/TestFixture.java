@@ -10,7 +10,6 @@ import com.dissonance.itit.domain.entity.Image;
 import com.dissonance.itit.domain.entity.InfoPost;
 import com.dissonance.itit.domain.entity.User;
 import com.dissonance.itit.domain.enums.Role;
-import com.dissonance.itit.dto.common.PositionInfo;
 import com.dissonance.itit.dto.request.InfoPostReq;
 import com.dissonance.itit.dto.response.InfoPostRes;
 
@@ -80,11 +79,11 @@ public class TestFixture {
 			.build();
 	}
 
-	public static List<PositionInfo> createMultiplePositionInfos() {
+	public static List<String> createMultiplePositionInfos() {
 		return List.of(
-			new PositionInfo("개발자", 0),
-			new PositionInfo("기획자", 1),
-			new PositionInfo("디자이너", 2)
+			"개발자 0명",
+			"기획자 1명",
+			"디자이너 2명"
 		);
 	}
 
