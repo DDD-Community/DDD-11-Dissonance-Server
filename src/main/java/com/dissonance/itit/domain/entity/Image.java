@@ -2,7 +2,6 @@ package com.dissonance.itit.domain.entity;
 
 import com.dissonance.itit.domain.enums.Directory;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -47,6 +46,6 @@ public class Image {
 	@Column(name = "directory")
 	private Directory directory;
 
-	@OneToOne(mappedBy = "image", cascade = CascadeType.ALL)
+	@OneToOne(mappedBy = "image")
 	private InfoPost infoPost;
 }

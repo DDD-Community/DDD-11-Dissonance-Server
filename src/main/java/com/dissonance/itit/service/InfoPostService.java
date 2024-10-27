@@ -15,12 +15,13 @@ import com.dissonance.itit.domain.entity.Image;
 import com.dissonance.itit.domain.entity.InfoPost;
 import com.dissonance.itit.domain.entity.User;
 import com.dissonance.itit.domain.enums.Directory;
-import com.dissonance.itit.dto.common.PositionInfo;
 import com.dissonance.itit.dto.request.InfoPostReq;
+import com.dissonance.itit.dto.request.InfoPostUpdateReq;
 import com.dissonance.itit.dto.response.InfoPostCreateRes;
 import com.dissonance.itit.dto.response.InfoPostDetailRes;
 import com.dissonance.itit.dto.response.InfoPostDetailRes.InfoPostInfo;
 import com.dissonance.itit.dto.response.InfoPostRes;
+import com.dissonance.itit.dto.response.InfoPostUpdateRes;
 import com.dissonance.itit.repository.InfoPostRepository;
 import com.dissonance.itit.repository.InfoPostRepositorySupport;
 
@@ -50,7 +51,7 @@ public class InfoPostService {
 
 	@Transactional(readOnly = true)
 	public InfoPostDetailRes getInfoPostDetailById(Long infoPostId) {
-		InfoPostInfo infoPostInfo = infoPostRepositorySupport.findById(infoPostId);
+		InfoPostInfo infoPostInfo = infoPostRepositorySupport.findInfoPostWithDetails(infoPostId);
 
 		if (infoPostInfo == null) {
 			throw new CustomException(ErrorCode.NON_EXISTENT_INFO_POST_ID);
@@ -60,8 +61,7 @@ public class InfoPostService {
 			throw new CustomException(ErrorCode.REPORTED_INFO_POST_ID);
 		}
 
-		List<PositionInfo> positionInfos = recruitmentPositionService.findPositionInfosByInfoPostId(
-			infoPostId);
+		List<String> positionInfos = recruitmentPositionService.findPositionInfosByInfoPostId(infoPostId);
 
 		return InfoPostDetailRes.of(infoPostInfo, positionInfos);
 	}
@@ -83,5 +83,51 @@ public class InfoPostService {
 		imageService.delete(infoPost.getImage());
 
 		infoPostRepository.deleteById(infoPostId);
+	}
+
+	public InfoPostUpdateRes getInfoPostDetailByIdForUpdate(Long infoPostId) {
+		InfoPostUpdateRes.InfoPostInfo infoPostInfo = infoPostRepositorySupport.findInfoPostForUpdate(infoPostId);
+
+		if (infoPostInfo == null) {
+			throw new CustomException(ErrorCode.NON_EXISTENT_INFO_POST_ID);
+		}
+
+		List<String> positionInfos = recruitmentPositionService.findPositionInfosByInfoPostId(
+			infoPostId);
+
+		return InfoPostUpdateRes.of(infoPostInfo, positionInfos);
+	}
+
+	@Transactional
+	public InfoPostDetailRes updateInfoPost(Long infoPostId, MultipartFile imgFile, InfoPostReq infoPostReq,
+		User loginUser) {
+		InfoPost infoPost = findById(infoPostId);
+
+		validateAuthor(infoPost, loginUser);
+
+		Category category = infoPost.getCategory().getId().equals(infoPostReq.categoryId())
+			? infoPost.getCategory()
+			: categoryService.findById(infoPostReq.categoryId());
+
+		InfoPostUpdateReq updateReq = InfoPostUpdateReq.from(category, infoPostReq);
+		infoPost.update(updateReq);
+
+		recruitmentPositionService.updatePositions(infoPost, infoPostReq.positionInfos());
+		List<String> positionInfos = recruitmentPositionService.findPositionInfosByInfoPostId(infoPostId);
+
+		// TODO: S3 Transaction 처리 (데이터 정합성)
+		if (imgFile != null && !imgFile.isEmpty()) {
+			imageService.delete(infoPost.getImage());
+			Image newImage = imageService.upload(Directory.INFORMATION, imgFile);
+			infoPost.updateImage(newImage);
+		}
+
+		return InfoPostDetailRes.of(infoPost, positionInfos);
+	}
+
+	private void validateAuthor(InfoPost infoPost, User loginUser) {
+		if (!infoPost.isAuthor(loginUser)) {
+			throw new CustomException(ErrorCode.NO_INFO_POST_UPDATE_PERMISSION);
+		}
 	}
 }

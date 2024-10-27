@@ -27,11 +27,11 @@ import com.dissonance.itit.domain.entity.Image;
 import com.dissonance.itit.domain.entity.InfoPost;
 import com.dissonance.itit.domain.entity.User;
 import com.dissonance.itit.domain.enums.Directory;
-import com.dissonance.itit.dto.common.PositionInfo;
 import com.dissonance.itit.dto.request.InfoPostReq;
 import com.dissonance.itit.dto.response.InfoPostCreateRes;
 import com.dissonance.itit.dto.response.InfoPostDetailRes;
 import com.dissonance.itit.dto.response.InfoPostRes;
+import com.dissonance.itit.dto.response.InfoPostUpdateRes;
 import com.dissonance.itit.fixture.TestFixture;
 import com.dissonance.itit.repository.InfoPostRepository;
 import com.dissonance.itit.repository.InfoPostRepositorySupport;
@@ -65,7 +65,7 @@ public class InfoPostServiceTest {
 		InfoPostCreateRes expectedResponse = InfoPostCreateRes.of(infoPost);
 
 		given(imageService.upload(Directory.INFORMATION, imgFile)).willReturn(image);
-		given(categoryService.findById(anyInt())).willReturn(category);
+		given(categoryService.findById(anyInt())).willReturn(TestFixture.createAnotherCategory());
 		given(infoPostRepository.save(any())).willReturn(infoPost);
 
 		// When
@@ -90,9 +90,9 @@ public class InfoPostServiceTest {
 			LocalDate.now(), LocalDate.now().plusMonths(1),
 			"Content", "www.detailUrl.com", 100, false, "www.imageUrl.com");
 
-		List<PositionInfo> positionInfos = TestFixture.createMultiplePositionInfos();
+		List<String> positionInfos = TestFixture.createMultiplePositionInfos();
 
-		given(infoPostRepositorySupport.findById(infoPostId)).willReturn(infoPostInfo);
+		given(infoPostRepositorySupport.findInfoPostWithDetails(infoPostId)).willReturn(infoPostInfo);
 		given(recruitmentPositionService.findPositionInfosByInfoPostId(infoPostId)).willReturn(positionInfos);
 
 		// when
@@ -109,7 +109,7 @@ public class InfoPostServiceTest {
 	void getInfoPostDetailById_throwCustomException_givenNonExistentId() {
 		// given
 		Long infoPostId = 999L;
-		given(infoPostRepositorySupport.findById(infoPostId)).willReturn(null);
+		given(infoPostRepositorySupport.findInfoPostWithDetails(infoPostId)).willReturn(null);
 
 		// when & then
 		assertThatThrownBy(() -> infoPostService.getInfoPostDetailById(infoPostId))
@@ -128,7 +128,7 @@ public class InfoPostServiceTest {
 			LocalDate.now(), LocalDate.now().plusMonths(1),
 			"Content", "www.detailUrl.com", 100, true, "www.imageUrl.com");
 
-		given(infoPostRepositorySupport.findById(infoPostId)).willReturn(reportedInfoPost);
+		given(infoPostRepositorySupport.findInfoPostWithDetails(infoPostId)).willReturn(reportedInfoPost);
 
 		// when & then
 		assertThatThrownBy(() -> infoPostService.getInfoPostDetailById(infoPostId))
@@ -204,5 +204,116 @@ public class InfoPostServiceTest {
 		assertThatThrownBy(() -> infoPostService.deleteInfoPostById(infoPostId))
 			.isInstanceOf(CustomException.class)
 			.hasMessage(ErrorCode.NON_EXISTENT_INFO_POST_ID.getMessage());
+	}
+
+	@Test
+	@DisplayName("수정을 위한 공고 상세 조회 성공")
+	void getInfoPostDetailByIdForUpdate_returnInfoPostUpdateRes() {
+		// given
+		Long infoPostId = 1L;
+		InfoPostUpdateRes.InfoPostInfo infoPostInfo = new InfoPostUpdateRes.InfoPostInfo(
+			"Title", 2, "Organization",
+			LocalDate.now(), LocalDate.now().plusDays(5),
+			LocalDate.now(), LocalDate.now().plusMonths(1),
+			"Content", "www.detailUrl.com", "www.imgUrl.com");
+
+		List<String> positionInfos = TestFixture.createMultiplePositionInfos();
+
+		given(infoPostRepositorySupport.findInfoPostForUpdate(infoPostId)).willReturn(infoPostInfo);
+		given(recruitmentPositionService.findPositionInfosByInfoPostId(infoPostId)).willReturn(positionInfos);
+
+		// when
+		InfoPostUpdateRes result = infoPostService.getInfoPostDetailByIdForUpdate(infoPostId);
+
+		// then
+		assertThat(result.getTitle()).isEqualTo(infoPostInfo.getTitle());
+		assertThat(result.getContent()).isEqualTo(infoPostInfo.getContent());
+		assertThat(result.getPositionInfos()).isEqualTo(positionInfos);
+	}
+
+	@Test
+	@DisplayName("수정을 위한 공고 상세 조회시 존재하지 않는 ID로 조회하여 exception 발생")
+	void getInfoPostDetailByIdForUpdate_throwCustomException_givenNonExistentId() {
+		// given
+		Long infoPostId = 999L;
+		given(infoPostRepositorySupport.findInfoPostForUpdate(infoPostId)).willReturn(null);
+
+		// when & then
+		assertThatThrownBy(() -> infoPostService.getInfoPostDetailByIdForUpdate(infoPostId))
+			.isInstanceOf(CustomException.class)
+			.hasMessage(ErrorCode.NON_EXISTENT_INFO_POST_ID.getMessage());
+	}
+
+	@Test
+	@DisplayName("공고 수정 성공 - 이미지 변경 있음")
+	void updateInfoPost_withNewImage_returnInfoPostDetailRes() {
+		// given
+		Long infoPostId = 1L;
+		MockMultipartFile imgFile = TestFixture.getMockMultipartFile();
+		InfoPostReq infoPostReq = TestFixture.createInfoPostReq();
+		User loginUser = TestFixture.createUser();
+		Image oldImage = TestFixture.createImage();
+		Image newImage = TestFixture.createImage();
+		Category newCategory = TestFixture.createCategory();
+		InfoPost infoPost = TestFixture.createInfoPostWithImage(oldImage);
+
+		given(infoPostRepository.findById(infoPostId)).willReturn(Optional.of(infoPost));
+		given(categoryService.findById(infoPostReq.categoryId())).willReturn(newCategory);
+		given(imageService.upload(Directory.INFORMATION, imgFile)).willReturn(newImage);
+		given(recruitmentPositionService.findPositionInfosByInfoPostId(infoPostId))
+			.willReturn(TestFixture.createMultiplePositionInfos());
+
+		// when
+		InfoPostDetailRes result = infoPostService.updateInfoPost(infoPostId, imgFile, infoPostReq, loginUser);
+
+		// then
+		assertThat(result).isNotNull();
+		verify(imageService).delete(oldImage);
+		verify(imageService).upload(Directory.INFORMATION, imgFile);
+		verify(recruitmentPositionService).updatePositions(infoPost, infoPostReq.positionInfos());
+	}
+
+	@Test
+	@DisplayName("공고 수정 성공 - 이미지 변경 없음")
+	void updateInfoPost_withoutNewImage_returnInfoPostDetailRes() {
+		// given
+		Long infoPostId = 1L;
+		InfoPostReq infoPostReq = TestFixture.createInfoPostReq();
+		User loginUser = TestFixture.createUser();
+		Category sameCategory = TestFixture.createCategory();
+		InfoPost infoPost = TestFixture.createInfoPost(infoPostReq, loginUser, TestFixture.createImage(), sameCategory);
+
+		given(infoPostRepository.findById(infoPostId)).willReturn(Optional.of(infoPost));
+		given(categoryService.findById(any())).willReturn(TestFixture.createCategory());
+		given(recruitmentPositionService.findPositionInfosByInfoPostId(infoPostId))
+			.willReturn(TestFixture.createMultiplePositionInfos());
+
+		// when
+		InfoPostDetailRes result = infoPostService.updateInfoPost(infoPostId, null, infoPostReq, loginUser);
+
+		// then
+		assertThat(result).isNotNull();
+		verify(imageService, never()).delete(any());
+		verify(imageService, never()).upload(any(), any());
+		verify(recruitmentPositionService).updatePositions(infoPost, infoPostReq.positionInfos());
+	}
+
+	@Test
+	@DisplayName("권한 없는 사용자의 공고 수정 시도시 exception 발생")
+	void updateInfoPost_throwCustomException_givenUnauthorizedUser() {
+		// given
+		Long infoPostId = 1L;
+		InfoPostReq infoPostReq = TestFixture.createInfoPostReq();
+		User author = TestFixture.createUser();
+		User unauthorizedUser = TestFixture.createAnotherUser();
+		InfoPost infoPost = TestFixture.createInfoPost(infoPostReq, author, TestFixture.createImage(),
+			TestFixture.createCategory());
+
+		given(infoPostRepository.findById(infoPostId)).willReturn(Optional.of(infoPost));
+
+		// when & then
+		assertThatThrownBy(() -> infoPostService.updateInfoPost(infoPostId, null, infoPostReq, unauthorizedUser))
+			.isInstanceOf(CustomException.class)
+			.hasMessage(ErrorCode.NO_INFO_POST_UPDATE_PERMISSION.getMessage());
 	}
 }

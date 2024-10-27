@@ -10,7 +10,6 @@ import com.dissonance.itit.domain.entity.Image;
 import com.dissonance.itit.domain.entity.InfoPost;
 import com.dissonance.itit.domain.entity.User;
 import com.dissonance.itit.domain.enums.Role;
-import com.dissonance.itit.dto.common.PositionInfo;
 import com.dissonance.itit.dto.request.InfoPostReq;
 import com.dissonance.itit.dto.response.InfoPostRes;
 
@@ -46,6 +45,14 @@ public class TestFixture {
 			.build();
 	}
 
+	public static User createAnotherUser() {
+		return User.builder()
+			.id(2L)
+			.name("김홍시")
+			.role(Role.USER)
+			.build();
+	}
+
 	public static Image createImage() {
 		return Image.builder()
 			.id(5L)
@@ -56,6 +63,13 @@ public class TestFixture {
 		return Category.builder()
 			.id(2)
 			.name("해커톤")
+			.build();
+	}
+
+	public static Category createAnotherCategory() {
+		return Category.builder()
+			.id(4)
+			.name("IT 동아리")
 			.build();
 	}
 
@@ -77,14 +91,16 @@ public class TestFixture {
 			.id(1L)
 			.title("Post 1")
 			.image(image)
+			.author(createUser())
+			.category(createCategory())
 			.build();
 	}
 
-	public static List<PositionInfo> createMultiplePositionInfos() {
+	public static List<String> createMultiplePositionInfos() {
 		return List.of(
-			new PositionInfo("개발자", 0),
-			new PositionInfo("기획자", 1),
-			new PositionInfo("디자이너", 2)
+			"개발자 0명",
+			"기획자 1명",
+			"디자이너 2명"
 		);
 	}
 
