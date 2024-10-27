@@ -9,6 +9,10 @@ import com.dissonance.itit.common.exception.ErrorCode;
 
 public class DateUtil {
 	public static LocalDate stringToDate(String dateString) {
+		if (dateString == null) {
+			return null;
+		}
+
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 M월 d일");
 		try {
 			return LocalDate.parse(dateString, formatter);
@@ -22,6 +26,9 @@ public class DateUtil {
 	}
 
 	public static String formatDate(LocalDate date) {
+		if (date == null)
+			return "";
+
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일");
 		return date.format(formatter);
 	}

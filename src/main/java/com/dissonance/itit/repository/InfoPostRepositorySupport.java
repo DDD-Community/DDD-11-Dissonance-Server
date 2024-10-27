@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import com.dissonance.itit.domain.entity.QInfoPost;
 import com.dissonance.itit.dto.response.InfoPostDetailRes.InfoPostInfo;
 import com.dissonance.itit.dto.response.InfoPostRes;
+import com.dissonance.itit.dto.response.InfoPostUpdateRes;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
@@ -29,7 +30,7 @@ public class InfoPostRepositorySupport {
 	private final JPAQueryFactory jpaQueryFactory;
 	private final QInfoPost infoPost = QInfoPost.infoPost;
 
-	public InfoPostInfo findById(Long infoPostId) {
+	public InfoPostInfo findInfoPostWithDetails(Long infoPostId) {
 		incrementViewCount(infoPostId);
 
 		return jpaQueryFactory.select(Projections.constructor(InfoPostInfo.class,
@@ -135,5 +136,23 @@ public class InfoPostRepositorySupport {
 		}
 
 		return condition;
+	}
+
+	public InfoPostUpdateRes.InfoPostInfo findInfoPostForUpdate(Long infoPostId) {
+		return jpaQueryFactory.select(Projections.constructor(InfoPostUpdateRes.InfoPostInfo.class,
+				infoPost.title.as("title"),
+				infoPost.category.id.as("categoryId"),
+				infoPost.organization.as("organization"),
+				infoPost.recruitmentStartDate.as("recruitmentStartDate"),
+				infoPost.recruitmentEndDate.as("recruitmentEndDate"),
+				infoPost.activityStartDate.as("activityStartDate"),
+				infoPost.activityEndDate.as("activityEndDate"),
+				infoPost.content.as("content"),
+				infoPost.detailUrl.as("detailUrl"),
+				infoPost.image.imageUrl.as("imageUrl")
+			))
+			.from(infoPost)
+			.where(infoPost.id.eq(infoPostId))
+			.fetchOne();
 	}
 }
