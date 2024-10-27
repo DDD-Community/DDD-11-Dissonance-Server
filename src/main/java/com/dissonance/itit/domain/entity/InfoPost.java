@@ -2,6 +2,8 @@ package com.dissonance.itit.domain.entity;
 
 import java.time.LocalDate;
 
+import com.dissonance.itit.dto.request.InfoPostUpdateReq;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -38,6 +40,7 @@ public class InfoPost extends BaseTime {
 	@Column(name = "title")
 	private String title;
 
+	@NotNull
 	@Size(max = 4000)
 	@Column(name = "content")
 	private String content;
@@ -85,4 +88,24 @@ public class InfoPost extends BaseTime {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "category_id")
 	private Category category;
+
+	public void updateImage(Image newImage) {
+		this.image = newImage;
+	}
+
+	public void update(InfoPostUpdateReq updateReq) {
+		this.category = updateReq.category();
+		this.title = updateReq.title();
+		this.organization = updateReq.organization();
+		this.content = updateReq.content();
+		this.recruitmentStartDate = updateReq.recruitmentStartDate();
+		this.recruitmentEndDate = updateReq.recruitmentEndDate();
+		this.activityStartDate = updateReq.activityStartDate();
+		this.activityEndDate = updateReq.activityEndDate();
+		this.detailUrl = updateReq.detailUrl();
+	}
+
+	public boolean isAuthor(User loginUser) {
+		return this.getAuthor().getId().equals(loginUser.getId());
+	}
 }

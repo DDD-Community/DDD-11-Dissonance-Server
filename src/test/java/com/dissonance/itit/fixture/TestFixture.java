@@ -45,6 +45,14 @@ public class TestFixture {
 			.build();
 	}
 
+	public static User createAnotherUser() {
+		return User.builder()
+			.id(2L)
+			.name("김홍시")
+			.role(Role.USER)
+			.build();
+	}
+
 	public static Image createImage() {
 		return Image.builder()
 			.id(5L)
@@ -55,6 +63,13 @@ public class TestFixture {
 		return Category.builder()
 			.id(2)
 			.name("해커톤")
+			.build();
+	}
+
+	public static Category createAnotherCategory() {
+		return Category.builder()
+			.id(4)
+			.name("IT 동아리")
 			.build();
 	}
 
@@ -76,6 +91,8 @@ public class TestFixture {
 			.id(1L)
 			.title("Post 1")
 			.image(image)
+			.author(createUser())
+			.category(createCategory())
 			.build();
 	}
 

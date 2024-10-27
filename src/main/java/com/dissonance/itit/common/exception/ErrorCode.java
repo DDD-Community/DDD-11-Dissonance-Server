@@ -17,6 +17,7 @@ public enum ErrorCode {
 
 	// 403
 	UNAUTHORIZED_REFRESH_TOKEN(HttpStatus.FORBIDDEN, "권한없는 Refresh Token입니다."),
+	NO_INFO_POST_UPDATE_PERMISSION(HttpStatus.FORBIDDEN, "게시글 수정 권한이 없습니다."),
 
 	// 404
 	NON_EXISTENT_USER_ID(HttpStatus.NOT_FOUND, "해당 id의 사용자가 존재하지 않습니다."),
