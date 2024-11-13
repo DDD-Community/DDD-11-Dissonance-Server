@@ -22,6 +22,8 @@ public class DateUtil {
 	}
 
 	public static String formatPeriod(LocalDate startDate, LocalDate endDate) {
+		if (startDate == null && endDate == null)
+			return null;
 		return formatDate(startDate) + " ~ " + formatDate(endDate);
 	}
 

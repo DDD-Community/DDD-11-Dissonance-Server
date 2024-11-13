@@ -86,7 +86,8 @@ public class InfoPostService {
 	}
 
 	public InfoPostUpdateRes getInfoPostDetailByIdForUpdate(Long infoPostId) {
-		InfoPostUpdateRes.InfoPostInfo infoPostInfo = infoPostRepositorySupport.findInfoPostForUpdate(infoPostId);
+		InfoPostUpdateRes.InfoPostInfo infoPostInfo = infoPostRepositorySupport.findInfoPostDetailsForUpdate(
+			infoPostId);
 
 		if (infoPostInfo == null) {
 			throw new CustomException(ErrorCode.NON_EXISTENT_INFO_POST_ID);
@@ -129,5 +130,10 @@ public class InfoPostService {
 		if (!infoPost.isAuthor(loginUser)) {
 			throw new CustomException(ErrorCode.NO_INFO_POST_UPDATE_PERMISSION);
 		}
+	}
+
+	@Transactional(readOnly = true)
+	public Page<InfoPostRes> getInfoPostsByKeyword(String keyword, Pageable pageable) {
+		return infoPostRepositorySupport.findInfoPostsByKeyword(keyword, pageable);
 	}
 }

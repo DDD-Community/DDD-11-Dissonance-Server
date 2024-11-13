@@ -18,6 +18,7 @@ import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.BooleanTemplate;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -67,16 +68,16 @@ public class InfoPostRepositorySupport {
 					infoPost.title,
 					infoPost.recruitmentEndDate))
 			.from(infoPost)
-			.where(createCondition(categoryId))
+			.where(buildCategoryCondition(categoryId))
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
-			.orderBy(getOrderSpecifiers(pageable.getSort()))
+			.orderBy(buildOrderSpecifiers(pageable.getSort()))
 			.fetch();
 
-		return paginationInfoPosts(categoryId, InfoPostRes.of(postInfos), pageable);
+		return paginateInfoPostsByCategory(categoryId, InfoPostRes.of(postInfos), pageable);
 	}
 
-	public OrderSpecifier<?>[] getOrderSpecifiers(Sort sort) {
+	public OrderSpecifier<?>[] buildOrderSpecifiers(Sort sort) {
 		List<OrderSpecifier<?>> orderSpecifiers = new ArrayList<>();
 
 		for (Sort.Order order : sort) {
@@ -115,20 +116,20 @@ public class InfoPostRepositorySupport {
 		}
 	}
 
-	private Page<InfoPostRes> paginationInfoPosts(Integer categoryId, List<InfoPostRes> infoPostRes,
+	private Page<InfoPostRes> paginateInfoPostsByCategory(Integer categoryId, List<InfoPostRes> infoPostRes,
 		Pageable pageable) {
-		JPAQuery<Long> countQuery = getCountQuery(categoryId);
+		JPAQuery<Long> countQuery = getCountQueryByCategory(categoryId);
 
 		return PageableExecutionUtils.getPage(infoPostRes, pageable, countQuery::fetchOne);
 	}
 
-	private JPAQuery<Long> getCountQuery(Integer categoryId) {
+	private JPAQuery<Long> getCountQueryByCategory(Integer categoryId) {
 		return jpaQueryFactory.select(infoPost.id.count())
 			.from(infoPost)
-			.where(createCondition(categoryId));
+			.where(buildCategoryCondition(categoryId));
 	}
 
-	private BooleanExpression createCondition(Integer categoryId) {
+	private BooleanExpression buildCategoryCondition(Integer categoryId) {
 		BooleanExpression condition = infoPost.category.id.eq(categoryId);
 
 		if (categoryId == 1) {
@@ -138,7 +139,7 @@ public class InfoPostRepositorySupport {
 		return condition;
 	}
 
-	public InfoPostUpdateRes.InfoPostInfo findInfoPostForUpdate(Long infoPostId) {
+	public InfoPostUpdateRes.InfoPostInfo findInfoPostDetailsForUpdate(Long infoPostId) {
 		return jpaQueryFactory.select(Projections.constructor(InfoPostUpdateRes.InfoPostInfo.class,
 				infoPost.title.as("title"),
 				infoPost.category.id.as("categoryId"),
@@ -154,5 +155,44 @@ public class InfoPostRepositorySupport {
 			.from(infoPost)
 			.where(infoPost.id.eq(infoPostId))
 			.fetchOne();
+	}
+
+	public Page<InfoPostRes> findInfoPostsByKeyword(String keyword, Pageable pageable) {
+		List<InfoPostRes.InfoPostInfo> postInfos = jpaQueryFactory.select(
+				Projections.constructor(InfoPostRes.InfoPostInfo.class,
+					infoPost.id,
+					infoPost.image.imageUrl,
+					infoPost.title,
+					infoPost.recruitmentEndDate))
+			.from(infoPost)
+			.where(buildKeywordMatchCondition(keyword))
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.orderBy(buildOrderSpecifiers(pageable.getSort()))
+			.fetch();
+
+		return paginateInfoPostsByKeyword(keyword, InfoPostRes.of(postInfos), pageable);
+	}
+
+	private Page<InfoPostRes> paginateInfoPostsByKeyword(String keyword, List<InfoPostRes> infoPostRes,
+		Pageable pageable) {
+		JPAQuery<Long> countQuery = getCountQueryByKeyword(keyword);
+
+		return PageableExecutionUtils.getPage(infoPostRes, pageable, countQuery::fetchOne);
+	}
+
+	private JPAQuery<Long> getCountQueryByKeyword(String keyword) {
+		return jpaQueryFactory.select(infoPost.id.count())
+			.from(infoPost)
+			.where(buildKeywordMatchCondition(keyword));
+	}
+
+	private BooleanTemplate buildKeywordMatchCondition(String keyword) {
+		return Expressions.booleanTemplate(
+			"function('match_against', {0}, {1}, {2})",
+			infoPost.title,
+			infoPost.content,
+			keyword + '*'
+		);
 	}
 }

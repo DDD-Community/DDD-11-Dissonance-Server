@@ -1,4 +1,3 @@
-# TODO: active profile 분리
 cors:
   allowed-origins: "*"
 
@@ -13,16 +12,17 @@ spring:
     password: ${DB_PASSWORD}
     hikari:
       connection-timeout: 2000
-      maximum-pool-size: 5
+      maximum-pool-size: ${POOL_SIZE:5}
     driver-class-name: org.mariadb.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: ${DDL_AUTO:update}
     show-sql: true
     properties:
       hibernate:
         format_sql: true
-    defer-datasource-initialization: true
+        dialect: com.dissonance.itit.config.MariaDBFullTextDialect
+    defer-datasource-initialization: ${DEFER_INIT:true}
   profiles:
     include: oauth
   servlet:
@@ -42,9 +42,8 @@ logging:
   level:
     org:
       hibernate:
-        type: trace
+        type: ${LOG_LEVEL:trace}
         stat: debug
-    org.springframework.web.reactive.function.client.ExchangeFunctions: TRACE
 
 cloud:
   aws:
