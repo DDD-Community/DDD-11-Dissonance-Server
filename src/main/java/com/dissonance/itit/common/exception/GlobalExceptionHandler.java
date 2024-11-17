@@ -16,7 +16,7 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(CustomException.class)
 	protected ResponseEntity<ApiResponse<?>> handleCustomException(CustomException e) {
 		int statusCode = e.getErrorCode().getHttpStatus().value();
-		log.error("CustomException : {}", e.getMessage());
+		log.error("CustomException: ", e);
 		return new ResponseEntity<>(ApiResponse.error(statusCode, e.getMessage()),
 			e.getErrorCode().getHttpStatus());
 	}
@@ -24,7 +24,7 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ApiResponse<?>> handleAllException(final Exception e) {
 		int statusCode = HttpStatus.INTERNAL_SERVER_ERROR.value();
-		log.error("handleAllException {}", e.getMessage());
+		log.error("handleAllException: ", e);
 		return new ResponseEntity<>(ApiResponse.error(statusCode, e.getMessage()),
 			HttpStatus.INTERNAL_SERVER_ERROR);
 	}
@@ -32,7 +32,7 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(MaxUploadSizeExceededException.class)
 	public ResponseEntity<ApiResponse<?>> handleMaxSizeException(MaxUploadSizeExceededException e) {
 		int statusCode = e.getStatusCode().value();
-		log.error("MaxUploadSizeExceededException {}", e.getMessage());
+		log.error("MaxUploadSizeExceededException: ", e);
 		return new ResponseEntity<>(ApiResponse.error(statusCode, e.getMessage()),
 			HttpStatus.PAYLOAD_TOO_LARGE);
 	}
