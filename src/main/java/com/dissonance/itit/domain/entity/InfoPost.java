@@ -52,6 +52,7 @@ public class InfoPost extends BaseTime {
 	@Column(name = "recruitment_start_date")
 	private LocalDate recruitmentStartDate;
 
+	@NotNull
 	@Column(name = "recruitment_end_date")
 	private LocalDate recruitmentEndDate;
 
