@@ -66,6 +66,12 @@ jobs:
         run: |
           aws ec2 authorize-security-group-ingress --group-id ${{ secrets.AWS_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
 
+      # 배포 시작 알림 전송
+      - name: Start Deployment
+        continue-on-error: true
+        run: |
+          curl -X POST -H "Content-Type: application/json" --data '{"content":"Deployment started!"}' ${{ secrets.DISCORD_WEBHOOK }}
+
       # ssh로 접속해 재배포
       - name: Deploy
         uses: appleboy/ssh-action@master
@@ -79,7 +85,18 @@ jobs:
             docker-compose pull
             docker-compose up -d
 
+      # 배포 완료 알림 전송
+      - name: Notify Deployment Completed
+        if: success()
+        run: |
+          curl -X POST -H "Content-Type: application/json" --data '{"content":"Deployment completed successfully!"}' ${{ secrets.DISCORD_WEBHOOK }}
+      - name: Notify Deployment Failed
+        if: failure()
+        run: |
+          curl -X POST -H "Content-Type: application/json" --data '{"content":"Deployment failed!"}' ${{ secrets.DISCORD_WEBHOOK }}
+
       # 배포 후 보안 그룹에서 github ip 삭제
       - name: Remove Github Actions IP From Security Group
+        if: always()
         run: |
           aws ec2 revoke-security-group-ingress --group-id ${{ secrets.AWS_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
