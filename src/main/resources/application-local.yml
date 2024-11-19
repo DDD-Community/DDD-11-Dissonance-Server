@@ -37,7 +37,6 @@ logging:
         stat: debug
   discord:
     webhook-url: ${DISCORD_WEBHOOK_URL}
-  config: classpath:logback.xml
 
 cloud:
   aws:
