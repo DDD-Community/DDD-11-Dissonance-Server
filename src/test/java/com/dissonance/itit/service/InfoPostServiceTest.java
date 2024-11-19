@@ -219,7 +219,7 @@ public class InfoPostServiceTest {
 
 		List<String> positionInfos = TestFixture.createMultiplePositionInfos();
 
-		given(infoPostRepositorySupport.findInfoPostForUpdate(infoPostId)).willReturn(infoPostInfo);
+		given(infoPostRepositorySupport.findInfoPostDetailsForUpdate(infoPostId)).willReturn(infoPostInfo);
 		given(recruitmentPositionService.findPositionInfosByInfoPostId(infoPostId)).willReturn(positionInfos);
 
 		// when
@@ -236,7 +236,7 @@ public class InfoPostServiceTest {
 	void getInfoPostDetailByIdForUpdate_throwCustomException_givenNonExistentId() {
 		// given
 		Long infoPostId = 999L;
-		given(infoPostRepositorySupport.findInfoPostForUpdate(infoPostId)).willReturn(null);
+		given(infoPostRepositorySupport.findInfoPostDetailsForUpdate(infoPostId)).willReturn(null);
 
 		// when & then
 		assertThatThrownBy(() -> infoPostService.getInfoPostDetailByIdForUpdate(infoPostId))
