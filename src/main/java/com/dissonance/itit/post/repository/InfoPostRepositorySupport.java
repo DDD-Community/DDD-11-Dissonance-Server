@@ -45,7 +45,6 @@ public class InfoPostRepositorySupport {
 				infoPost.content.as("content"),
 				infoPost.detailUrl.as("detailUrl"),
 				infoPost.viewCount.as("viewCount"),
-				infoPost.reported.as("reported"),
 				infoPost.image.imageUrl.as("imageUrl")
 			))
 			.from(infoPost)

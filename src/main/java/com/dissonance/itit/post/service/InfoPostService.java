@@ -59,10 +59,6 @@ public class InfoPostService {
 			throw new CustomException(ErrorCode.NON_EXISTENT_INFO_POST_ID);
 		}
 
-		if (infoPostInfo.getReported()) {
-			throw new CustomException(ErrorCode.REPORTED_INFO_POST_ID);
-		}
-
 		List<String> positionInfos = recruitmentPositionService.findPositionInfosByInfoPostId(infoPostId);
 
 		return InfoPostDetailRes.of(infoPostInfo, positionInfos);

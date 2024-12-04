@@ -4,8 +4,8 @@ import java.time.LocalDate;
 
 import com.dissonance.itit.global.common.entity.BaseTime;
 import com.dissonance.itit.image.domain.Image;
-import com.dissonance.itit.user.domain.User;
 import com.dissonance.itit.post.dto.request.InfoPostUpdateReq;
+import com.dissonance.itit.user.domain.User;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -74,9 +74,6 @@ public class InfoPost extends BaseTime {
 	@NotNull
 	@Column(name = "organization")
 	private String organization;
-
-	@Column(name = "reported")
-	private Boolean reported;
 
 	@Column(name = "recruitment_closed")
 	private Boolean recruitmentClosed;

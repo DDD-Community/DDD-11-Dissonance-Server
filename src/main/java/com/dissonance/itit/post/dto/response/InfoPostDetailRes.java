@@ -38,7 +38,6 @@ public class InfoPostDetailRes {
 		private String content;
 		private String detailUrl;
 		private Integer viewCount;
-		private Boolean reported;
 		private final String imageUrl;
 	}
 

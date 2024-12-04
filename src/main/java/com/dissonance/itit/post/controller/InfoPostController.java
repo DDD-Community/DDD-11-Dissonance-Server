@@ -3,19 +3,15 @@ package com.dissonance.itit.post.controller;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dissonance.itit.global.common.annotation.CurrentUser;
 import com.dissonance.itit.global.common.util.ApiResponse;
 import com.dissonance.itit.post.dto.response.InfoPostDetailRes;
 import com.dissonance.itit.post.dto.response.InfoPostRes;
 import com.dissonance.itit.post.service.InfoPostService;
-import com.dissonance.itit.post.service.ReportService;
-import com.dissonance.itit.user.domain.User;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -25,20 +21,12 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/info-posts")
 public class InfoPostController {
 	private final InfoPostService infoPostService;
-	private final ReportService reportService;
 
 	@GetMapping("/{infoPostId}")
 	@Operation(summary = "공고 게시글 조회", description = "공고 게시글을 상세 조회합니다.")
 	public ApiResponse<InfoPostDetailRes> getInfoPostDetail(@PathVariable Long infoPostId) {
 		InfoPostDetailRes infoPostDetailRes = infoPostService.getInfoPostDetailById(infoPostId);
 		return ApiResponse.success(infoPostDetailRes);
-	}
-
-	@PatchMapping("/{infoPostId}/reports")
-	@Operation(summary = "공고 게시글 신고", description = "공고 게시글을 신고 처리합니다.")
-	public ApiResponse<String> reportedInfoPost(@PathVariable Long infoPostId, @CurrentUser User loginUser) {
-		Long resultId = reportService.reportedInfoPost(infoPostId, loginUser);
-		return ApiResponse.success(resultId + "번 게시글의 신고가 성공적으로 접수되었습니다.");
 	}
 
 	@GetMapping("/categories/{categoryId}/posts")

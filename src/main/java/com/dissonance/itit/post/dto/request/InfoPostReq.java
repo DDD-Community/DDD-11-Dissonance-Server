@@ -55,7 +55,6 @@ public record InfoPostReq(
 			.activityStartDate(stringToDate(activityStartDate()))
 			.activityEndDate(stringToDate(activityEndDate()))
 			.detailUrl(detailUrl())
-			.reported(false)
 			.recruitmentClosed(false)
 			.build();
 	}
