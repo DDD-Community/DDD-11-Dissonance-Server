@@ -5,13 +5,13 @@ import java.util.List;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 
-import com.dissonance.itit.domain.entity.Category;
-import com.dissonance.itit.domain.entity.Image;
-import com.dissonance.itit.domain.entity.InfoPost;
-import com.dissonance.itit.domain.entity.User;
-import com.dissonance.itit.domain.enums.Role;
-import com.dissonance.itit.dto.request.InfoPostReq;
-import com.dissonance.itit.dto.response.InfoPostRes;
+import com.dissonance.itit.image.domain.Image;
+import com.dissonance.itit.post.domain.Category;
+import com.dissonance.itit.post.domain.InfoPost;
+import com.dissonance.itit.post.dto.request.InfoPostReq;
+import com.dissonance.itit.post.dto.response.InfoPostRes;
+import com.dissonance.itit.user.domain.Role;
+import com.dissonance.itit.user.domain.User;
 
 public class TestFixture {
 	public static MockMultipartFile getMockMultipartFile() {

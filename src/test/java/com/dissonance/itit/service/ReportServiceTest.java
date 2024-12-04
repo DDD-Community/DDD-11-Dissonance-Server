@@ -10,15 +10,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.dissonance.itit.common.exception.CustomException;
-import com.dissonance.itit.common.exception.ErrorCode;
-import com.dissonance.itit.domain.entity.Category;
-import com.dissonance.itit.domain.entity.Image;
-import com.dissonance.itit.domain.entity.InfoPost;
-import com.dissonance.itit.domain.entity.User;
-import com.dissonance.itit.dto.request.InfoPostReq;
 import com.dissonance.itit.fixture.TestFixture;
-import com.dissonance.itit.repository.ReportRepository;
+import com.dissonance.itit.global.common.exception.CustomException;
+import com.dissonance.itit.global.common.exception.ErrorCode;
+import com.dissonance.itit.image.domain.Image;
+import com.dissonance.itit.post.domain.Category;
+import com.dissonance.itit.post.domain.InfoPost;
+import com.dissonance.itit.post.dto.request.InfoPostReq;
+import com.dissonance.itit.post.repository.ReportRepository;
+import com.dissonance.itit.post.service.InfoPostService;
+import com.dissonance.itit.post.service.ReportService;
+import com.dissonance.itit.user.domain.User;
 
 @ExtendWith(MockitoExtension.class)
 public class ReportServiceTest {

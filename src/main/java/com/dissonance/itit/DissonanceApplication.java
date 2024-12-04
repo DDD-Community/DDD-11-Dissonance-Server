@@ -8,8 +8,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @SpringBootApplication
 public class DissonanceApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(DissonanceApplication.class, args);
-    }
+	public static void main(String[] args) {
+		SpringApplication.run(DissonanceApplication.class, args);
+	}
 
 }
