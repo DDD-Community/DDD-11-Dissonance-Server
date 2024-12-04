@@ -14,6 +14,7 @@ public class InfoPostRes {
 	private final String imgUrl;
 	private final String title;
 	private final String remainingDays;
+	private final Integer viewCount;
 
 	public static List<InfoPostRes> of(List<InfoPostInfo> postInfos) {
 		return postInfos.stream()
@@ -22,6 +23,7 @@ public class InfoPostRes {
 				.imgUrl(postInfo.imgUrl())
 				.title(postInfo.title())
 				.remainingDays(calculateRemainingDays(postInfo.deadline()))
+				.viewCount(postInfo.viewCount())
 				.build())
 			.toList();
 	}
@@ -43,6 +45,7 @@ public class InfoPostRes {
 		Long id,
 		String imgUrl,
 		String title,
-		LocalDate deadline) {
+		LocalDate deadline,
+		Integer viewCount) {
 	}
 }

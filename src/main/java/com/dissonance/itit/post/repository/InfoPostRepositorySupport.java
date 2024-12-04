@@ -66,7 +66,8 @@ public class InfoPostRepositorySupport {
 					infoPost.id,
 					infoPost.image.imageUrl,
 					infoPost.title,
-					infoPost.recruitmentEndDate))
+					infoPost.recruitmentEndDate,
+					infoPost.viewCount))
 			.from(infoPost)
 			.where(buildCategoryCondition(categoryId))
 			.offset(pageable.getOffset())
@@ -163,7 +164,8 @@ public class InfoPostRepositorySupport {
 					infoPost.id,
 					infoPost.image.imageUrl,
 					infoPost.title,
-					infoPost.recruitmentEndDate))
+					infoPost.recruitmentEndDate,
+					infoPost.viewCount))
 			.from(infoPost)
 			.where(buildKeywordMatchCondition(keyword))
 			.offset(pageable.getOffset())
