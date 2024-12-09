@@ -20,21 +20,25 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.mock.web.MockMultipartFile;
 
-import com.dissonance.itit.common.exception.CustomException;
-import com.dissonance.itit.common.exception.ErrorCode;
-import com.dissonance.itit.domain.entity.Category;
-import com.dissonance.itit.domain.entity.Image;
-import com.dissonance.itit.domain.entity.InfoPost;
-import com.dissonance.itit.domain.entity.User;
-import com.dissonance.itit.domain.enums.Directory;
-import com.dissonance.itit.dto.request.InfoPostReq;
-import com.dissonance.itit.dto.response.InfoPostCreateRes;
-import com.dissonance.itit.dto.response.InfoPostDetailRes;
-import com.dissonance.itit.dto.response.InfoPostRes;
-import com.dissonance.itit.dto.response.InfoPostUpdateRes;
 import com.dissonance.itit.fixture.TestFixture;
-import com.dissonance.itit.repository.InfoPostRepository;
-import com.dissonance.itit.repository.InfoPostRepositorySupport;
+import com.dissonance.itit.global.common.exception.CustomException;
+import com.dissonance.itit.global.common.exception.ErrorCode;
+import com.dissonance.itit.image.domain.Directory;
+import com.dissonance.itit.image.domain.Image;
+import com.dissonance.itit.image.service.ImageService;
+import com.dissonance.itit.post.domain.Category;
+import com.dissonance.itit.post.domain.InfoPost;
+import com.dissonance.itit.post.dto.request.InfoPostReq;
+import com.dissonance.itit.post.dto.response.InfoPostCreateRes;
+import com.dissonance.itit.post.dto.response.InfoPostDetailRes;
+import com.dissonance.itit.post.dto.response.InfoPostRes;
+import com.dissonance.itit.post.dto.response.InfoPostUpdateRes;
+import com.dissonance.itit.post.repository.InfoPostRepository;
+import com.dissonance.itit.post.repository.InfoPostRepositorySupport;
+import com.dissonance.itit.post.service.CategoryService;
+import com.dissonance.itit.post.service.InfoPostService;
+import com.dissonance.itit.recruitmentPosition.service.RecruitmentPositionService;
+import com.dissonance.itit.user.domain.User;
 
 @ExtendWith(MockitoExtension.class)
 public class InfoPostServiceTest {
