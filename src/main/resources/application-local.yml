@@ -14,7 +14,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
-        dialect: com.dissonance.itit.config.MariaDBFullTextDialect
+        dialect: com.dissonance.itit.global.config.MariaDBFullTextDialect
     defer-datasource-initialization: true
   servlet:
     multipart:
@@ -37,7 +37,6 @@ logging:
         stat: debug
   discord:
     webhook-url: ${DISCORD_WEBHOOK_URL}
-  config: classpath:logback.xml
 
 cloud:
   aws:
