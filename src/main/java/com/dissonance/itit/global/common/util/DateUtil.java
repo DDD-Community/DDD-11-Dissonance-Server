@@ -31,7 +31,7 @@ public class DateUtil {
 		if (date == null)
 			return "";
 
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일");
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
 		return date.format(formatter);
 	}
 }
