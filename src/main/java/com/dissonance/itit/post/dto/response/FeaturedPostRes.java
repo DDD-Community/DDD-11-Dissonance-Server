@@ -1,12 +1,12 @@
 package com.dissonance.itit.post.dto.response;
 
+import java.util.List;
+
 import com.dissonance.itit.post.domain.FeaturedPost;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
-
-import java.util.List;
 
 @Getter
 @Builder
@@ -26,5 +26,13 @@ public class FeaturedPostRes {
 				.infoPostId(featuredPost.getInfoPost().getId())
 				.build())
 			.toList();
+	}
+
+	public static FeaturedPostRes of(FeaturedPost featuredPost) {
+		return FeaturedPostRes.builder()
+			.featuredPostId(featuredPost.getId())
+			.bannerImageUrl(featuredPost.getBannerImageUrl())
+			.infoPostId(featuredPost.getInfoPost().getId())
+			.build();
 	}
 }

@@ -73,6 +73,28 @@ public class ImageService {
 		}
 	}
 
+	@Transactional
+	public String uploadAndGetImgPath(Directory directory, MultipartFile multipartFile) {
+		validateImage(multipartFile.getContentType());
+
+		String fileName = createFileName(multipartFile.getOriginalFilename(), directory.getName());
+
+		ObjectMetadata objectMetadata = new ObjectMetadata();
+
+		objectMetadata.setContentLength(multipartFile.getSize());
+
+		objectMetadata.setContentType(multipartFile.getContentType());
+
+		try (InputStream inputStream = multipartFile.getInputStream()) {
+			amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, inputStream, objectMetadata)
+				.withCannedAcl(CannedAccessControlList.PublicRead));
+
+			return amazonS3Client.getUrl(bucket, fileName).toString();
+		} catch (IOException e) {
+			throw new CustomException(IO_EXCEPTION);
+		}
+	}
+
 	/**
 	 * 주어진 콘텐츠 타입이 이미지 파일인지 검증합니다.
 	 *
