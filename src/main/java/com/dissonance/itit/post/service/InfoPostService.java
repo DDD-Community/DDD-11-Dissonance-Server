@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.dissonance.itit.global.common.exception.CustomException;
 import com.dissonance.itit.global.common.exception.ErrorCode;
+import com.dissonance.itit.global.common.util.SearchValidator;
 import com.dissonance.itit.image.domain.Image;
 import com.dissonance.itit.post.domain.Category;
 import com.dissonance.itit.post.domain.InfoPost;
@@ -113,6 +114,8 @@ public class InfoPostService {
 
 	@Transactional(readOnly = true)
 	public Page<InfoPostRes> getInfoPostsByKeyword(String keyword, Pageable pageable) {
+		SearchValidator.validateSearchKeyword(keyword);
+
 		return infoPostRepositorySupport.findInfoPostsByKeyword(keyword, pageable);
 	}
 }
