@@ -19,6 +19,7 @@ import com.dissonance.itit.global.common.exception.CustomException;
 import com.dissonance.itit.image.domain.Directory;
 import com.dissonance.itit.image.domain.Image;
 import com.dissonance.itit.image.repository.ImageRepository;
+import com.dissonance.itit.post.domain.InfoPost;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -93,6 +94,12 @@ public class ImageService {
 		} catch (IOException e) {
 			throw new CustomException(IO_EXCEPTION);
 		}
+	}
+
+	@Transactional
+	public Image updateImage(MultipartFile imgFile, InfoPost infoPost) {
+		delete(infoPost.getImage());
+		return upload(Directory.INFORMATION, imgFile);
 	}
 
 	/**

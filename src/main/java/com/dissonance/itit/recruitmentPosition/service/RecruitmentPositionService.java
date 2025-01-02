@@ -30,6 +30,7 @@ public class RecruitmentPositionService {
 		recruitmentPositionRepository.saveAll(recruitmentPositions);
 	}
 
+	@Transactional(readOnly = true)
 	public List<String> findPositionInfosByInfoPostId(Long infoPostId) {
 		return recruitmentPositionRepositorySupport.findByInfoPostId(infoPostId);
 	}
