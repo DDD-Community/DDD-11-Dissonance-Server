@@ -105,4 +105,8 @@ public class InfoPost extends BaseTime {
 	public boolean isAuthor(User loginUser) {
 		return this.getAuthor().getId().equals(loginUser.getId());
 	}
+
+	public void updateImage(Image image) {
+		this.image = image;
+	}
 }

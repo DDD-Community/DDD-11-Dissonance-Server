@@ -28,6 +28,7 @@ public class InfoPostFacade {
 	private final InfoPostService infoPostService;
 	private final RecruitmentPositionService recruitmentPositionService;
 
+	@Transactional
 	public InfoPostDetailRes updateInfoPostAndImg(Long infoPostId, MultipartFile imgFile, InfoPostReq infoPostReq,
 		User loginUser) {
 		// 1. DB 작업: 게시글 필드 업데이트
@@ -41,7 +42,7 @@ public class InfoPostFacade {
 				Image newImage = imageService.upload(Directory.INFORMATION, imgFile);
 
 				// DB에 이미지 정보 반영
-				infoPostService.updateImage(infoPost, newImage);
+				infoPost.updateImage(newImage);
 
 				// 이전 이미지 삭제는 DB 업데이트 후 처리
 				imageService.delete(oldImage);
