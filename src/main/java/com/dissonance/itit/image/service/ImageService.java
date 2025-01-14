@@ -19,6 +19,7 @@ import com.dissonance.itit.global.common.exception.CustomException;
 import com.dissonance.itit.image.domain.Directory;
 import com.dissonance.itit.image.domain.Image;
 import com.dissonance.itit.image.repository.ImageRepository;
+import com.dissonance.itit.post.domain.InfoPost;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -73,6 +74,34 @@ public class ImageService {
 		}
 	}
 
+	@Transactional
+	public String uploadAndGetImgPath(Directory directory, MultipartFile multipartFile) {
+		validateImage(multipartFile.getContentType());
+
+		String fileName = createFileName(multipartFile.getOriginalFilename(), directory.getName());
+
+		ObjectMetadata objectMetadata = new ObjectMetadata();
+
+		objectMetadata.setContentLength(multipartFile.getSize());
+
+		objectMetadata.setContentType(multipartFile.getContentType());
+
+		try (InputStream inputStream = multipartFile.getInputStream()) {
+			amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, inputStream, objectMetadata)
+				.withCannedAcl(CannedAccessControlList.PublicRead));
+
+			return amazonS3Client.getUrl(bucket, fileName).toString();
+		} catch (IOException e) {
+			throw new CustomException(IO_EXCEPTION);
+		}
+	}
+
+	@Transactional
+	public Image updateImage(MultipartFile imgFile, InfoPost infoPost) {
+		delete(infoPost.getImage());
+		return upload(Directory.INFORMATION, imgFile);
+	}
+
 	/**
 	 * 주어진 콘텐츠 타입이 이미지 파일인지 검증합니다.
 	 *
@@ -91,9 +120,12 @@ public class ImageService {
 	 */
 	@Transactional
 	public void delete(Image image) {
-		amazonS3Client.deleteObject(bucket, image.getDirectory().getName() + "/" + image.getConvertImageName());
-
-		imageRepository.deleteById(image.getId());
+		try {
+			amazonS3Client.deleteObject(bucket, image.getDirectory().getName() + "/" + image.getConvertImageName());
+			imageRepository.deleteById(image.getId());
+		} catch (Exception e) {
+			log.error("이미지 삭제 실패. 이미지 ID: {}", image.getId(), e);
+		}
 	}
 
 	/**

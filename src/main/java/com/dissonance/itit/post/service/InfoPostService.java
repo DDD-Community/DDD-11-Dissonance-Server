@@ -6,18 +6,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.dissonance.itit.global.common.exception.CustomException;
 import com.dissonance.itit.global.common.exception.ErrorCode;
-import com.dissonance.itit.image.domain.Directory;
+import com.dissonance.itit.global.common.util.SearchValidator;
 import com.dissonance.itit.image.domain.Image;
-import com.dissonance.itit.image.service.ImageService;
 import com.dissonance.itit.post.domain.Category;
 import com.dissonance.itit.post.domain.InfoPost;
 import com.dissonance.itit.post.dto.request.InfoPostReq;
 import com.dissonance.itit.post.dto.request.InfoPostUpdateReq;
-import com.dissonance.itit.post.dto.response.InfoPostCreateRes;
 import com.dissonance.itit.post.dto.response.InfoPostDetailRes;
 import com.dissonance.itit.post.dto.response.InfoPostDetailRes.InfoPostInfo;
 import com.dissonance.itit.post.dto.response.InfoPostRes;
@@ -35,20 +32,14 @@ public class InfoPostService {
 	private final InfoPostRepository infoPostRepository;
 	private final InfoPostRepositorySupport infoPostRepositorySupport;
 
-	private final ImageService imageService;
 	private final CategoryService categoryService;
 	private final RecruitmentPositionService recruitmentPositionService;
 
 	@Transactional
-	public InfoPostCreateRes createInfoPost(MultipartFile imgFile, InfoPostReq infoPostReq, User author) {
-		Image image = imageService.upload(Directory.INFORMATION, imgFile);
+	public InfoPost saveInfoPost(InfoPostReq infoPostReq, User author, Image image) {
 		Category category = categoryService.findById(infoPostReq.categoryId());
 
-		InfoPost infoPost = infoPostRepository.save(infoPostReq.toEntity(image, author, category));
-
-		recruitmentPositionService.addPositions(infoPost, infoPostReq.positionInfos());
-
-		return InfoPostCreateRes.of(infoPost);
+		return infoPostRepository.save(infoPostReq.toEntity(image, author, category));
 	}
 
 	@Transactional(readOnly = true)
@@ -77,12 +68,10 @@ public class InfoPostService {
 
 	@Transactional
 	public void deleteInfoPostById(Long infoPostId) {
-		InfoPost infoPost = findById(infoPostId);
-		imageService.delete(infoPost.getImage());
-
 		infoPostRepository.deleteById(infoPostId);
 	}
 
+	@Transactional(readOnly = true)
 	public InfoPostUpdateRes getInfoPostDetailByIdForUpdate(Long infoPostId) {
 		InfoPostUpdateRes.InfoPostInfo infoPostInfo = infoPostRepositorySupport.findInfoPostDetailsForUpdate(
 			infoPostId);
@@ -98,8 +87,9 @@ public class InfoPostService {
 	}
 
 	@Transactional
-	public InfoPostDetailRes updateInfoPost(Long infoPostId, MultipartFile imgFile, InfoPostReq infoPostReq,
+	public InfoPost updateInfoPostFields(Long infoPostId, InfoPostReq infoPostReq,
 		User loginUser) {
+
 		InfoPost infoPost = findById(infoPostId);
 
 		validateAuthor(infoPost, loginUser);
@@ -112,16 +102,8 @@ public class InfoPostService {
 		infoPost.update(updateReq);
 
 		recruitmentPositionService.updatePositions(infoPost, infoPostReq.positionInfos());
-		List<String> positionInfos = recruitmentPositionService.findPositionInfosByInfoPostId(infoPostId);
 
-		// TODO: S3 Transaction 처리 (데이터 정합성)
-		if (imgFile != null && !imgFile.isEmpty()) {
-			imageService.delete(infoPost.getImage());
-			Image newImage = imageService.upload(Directory.INFORMATION, imgFile);
-			infoPost.updateImage(newImage);
-		}
-
-		return InfoPostDetailRes.of(infoPost, positionInfos);
+		return infoPost;
 	}
 
 	private void validateAuthor(InfoPost infoPost, User loginUser) {
@@ -132,6 +114,8 @@ public class InfoPostService {
 
 	@Transactional(readOnly = true)
 	public Page<InfoPostRes> getInfoPostsByKeyword(String keyword, Pageable pageable) {
+		SearchValidator.validateSearchKeyword(keyword);
+
 		return infoPostRepositorySupport.findInfoPostsByKeyword(keyword, pageable);
 	}
 }

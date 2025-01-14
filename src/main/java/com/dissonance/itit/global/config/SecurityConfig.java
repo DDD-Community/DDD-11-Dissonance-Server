@@ -48,8 +48,9 @@ public class SecurityConfig {
 						"/swagger-ui/**",
 						"/v3/api-docs/**",
 						"/info-posts/**",
-						"/featured-posts/**").permitAll()
+						"/featured-posts").permitAll()
 					.requestMatchers("/admin/info-posts/**").hasRole("ADMIN")
+					.requestMatchers(HttpMethod.PUT, "/featured-posts/{featuredPostId}/**").hasRole("ADMIN")
 					.requestMatchers(HttpMethod.PATCH, "/info-posts/{infoPostId}/reports").authenticated()
 					.anyRequest().authenticated()
 			)

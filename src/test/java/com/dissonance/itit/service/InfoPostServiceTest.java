@@ -18,18 +18,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.mock.web.MockMultipartFile;
 
 import com.dissonance.itit.fixture.TestFixture;
 import com.dissonance.itit.global.common.exception.CustomException;
 import com.dissonance.itit.global.common.exception.ErrorCode;
-import com.dissonance.itit.image.domain.Directory;
 import com.dissonance.itit.image.domain.Image;
-import com.dissonance.itit.image.service.ImageService;
 import com.dissonance.itit.post.domain.Category;
 import com.dissonance.itit.post.domain.InfoPost;
 import com.dissonance.itit.post.dto.request.InfoPostReq;
-import com.dissonance.itit.post.dto.response.InfoPostCreateRes;
 import com.dissonance.itit.post.dto.response.InfoPostDetailRes;
 import com.dissonance.itit.post.dto.response.InfoPostRes;
 import com.dissonance.itit.post.dto.response.InfoPostUpdateRes;
@@ -50,8 +46,6 @@ public class InfoPostServiceTest {
 	@Mock
 	private InfoPostRepositorySupport infoPostRepositorySupport;
 	@Mock
-	private ImageService imageService;
-	@Mock
 	private CategoryService categoryService;
 	@Mock
 	private RecruitmentPositionService recruitmentPositionService;
@@ -60,27 +54,22 @@ public class InfoPostServiceTest {
 	@DisplayName("공고 생성 성공")
 	public void createInfoPost_returnInfoPostCreateRes() {
 		// given
-		MockMultipartFile imgFile = TestFixture.getMockMultipartFile();
 		InfoPostReq infoPostReq = TestFixture.createInfoPostReq();
 		User author = TestFixture.createUser();
 		Image image = TestFixture.createImage();
 		Category category = TestFixture.createCategory();
 		InfoPost infoPost = TestFixture.createInfoPost(infoPostReq, author, image, category);
-		InfoPostCreateRes expectedResponse = InfoPostCreateRes.of(infoPost);
 
-		given(imageService.upload(Directory.INFORMATION, imgFile)).willReturn(image);
 		given(categoryService.findById(anyInt())).willReturn(TestFixture.createAnotherCategory());
 		given(infoPostRepository.save(any())).willReturn(infoPost);
 
 		// When
-		InfoPostCreateRes actualResponse = infoPostService.createInfoPost(imgFile, infoPostReq, author);
+		InfoPost actualResponse = infoPostService.saveInfoPost(infoPostReq, author, image);
 
 		// Then
-		assertThat(actualResponse).isEqualTo(expectedResponse);
-		verify(imageService).upload(Directory.INFORMATION, imgFile);
+		assertThat(actualResponse).isEqualTo(infoPost);
 		verify(categoryService).findById(infoPostReq.categoryId());
 		verify(infoPostRepository).save(any(InfoPost.class));
-		verify(recruitmentPositionService).addPositions(infoPost, infoPostReq.positionInfos());
 	}
 
 	@Test
@@ -92,7 +81,7 @@ public class InfoPostServiceTest {
 			"Title", "Category", "Organization",
 			LocalDate.now(), LocalDate.now().plusDays(5),
 			LocalDate.now(), LocalDate.now().plusMonths(1),
-			"Content", "www.detailUrl.com", 100, false, "www.imageUrl.com");
+			"Content", "www.detailUrl.com", 100, "www.imageUrl.com");
 
 		List<String> positionInfos = TestFixture.createMultiplePositionInfos();
 
@@ -119,25 +108,6 @@ public class InfoPostServiceTest {
 		assertThatThrownBy(() -> infoPostService.getInfoPostDetailById(infoPostId))
 			.isInstanceOf(CustomException.class)
 			.hasMessage(ErrorCode.NON_EXISTENT_INFO_POST_ID.getMessage());
-	}
-
-	@Test
-	@DisplayName("공고 상세 조회시 신고된 않는 ID로 조회하여 exception 발생")
-	void getInfoPostDetailById_throwCustomException_givenReportedInfoPostId() {
-		// given
-		Long infoPostId = 1L;
-		InfoPostDetailRes.InfoPostInfo reportedInfoPost = new InfoPostDetailRes.InfoPostInfo(
-			"Title", "Category", "Organization",
-			LocalDate.now(), LocalDate.now().plusDays(5),
-			LocalDate.now(), LocalDate.now().plusMonths(1),
-			"Content", "www.detailUrl.com", 100, true, "www.imageUrl.com");
-
-		given(infoPostRepositorySupport.findInfoPostWithDetails(infoPostId)).willReturn(reportedInfoPost);
-
-		// when & then
-		assertThatThrownBy(() -> infoPostService.getInfoPostDetailById(infoPostId))
-			.isInstanceOf(CustomException.class)
-			.hasMessage(ErrorCode.REPORTED_INFO_POST_ID.getMessage());
 	}
 
 	@Test
@@ -184,30 +154,12 @@ public class InfoPostServiceTest {
 	void deleteInfoPostById_success() {
 		// given
 		Long infoPostId = 1L;
-		Image image = TestFixture.createImage();
-		InfoPost infoPost = TestFixture.createInfoPostWithImage(image);
-
-		given(infoPostRepository.findById(infoPostId)).willReturn(Optional.of(infoPost));
 
 		// when
 		infoPostService.deleteInfoPostById(infoPostId);
 
 		// then
-		verify(imageService).delete(infoPost.getImage());
 		verify(infoPostRepository).deleteById(infoPostId);
-	}
-
-	@Test
-	@DisplayName("존재하지 않는 ID로 InfoPost 삭제 시도시 CustomException 발생")
-	void deleteInfoPostById_throwCustomException_givenNonExistentId() {
-		// given
-		Long infoPostId = 999L;
-		given(infoPostRepository.findById(infoPostId)).willReturn(Optional.empty());
-
-		// when & then
-		assertThatThrownBy(() -> infoPostService.deleteInfoPostById(infoPostId))
-			.isInstanceOf(CustomException.class)
-			.hasMessage(ErrorCode.NON_EXISTENT_INFO_POST_ID.getMessage());
 	}
 
 	@Test
@@ -249,56 +201,24 @@ public class InfoPostServiceTest {
 	}
 
 	@Test
-	@DisplayName("공고 수정 성공 - 이미지 변경 있음")
+	@DisplayName("공고 수정 성공")
 	void updateInfoPost_withNewImage_returnInfoPostDetailRes() {
 		// given
 		Long infoPostId = 1L;
-		MockMultipartFile imgFile = TestFixture.getMockMultipartFile();
 		InfoPostReq infoPostReq = TestFixture.createInfoPostReq();
 		User loginUser = TestFixture.createUser();
-		Image oldImage = TestFixture.createImage();
-		Image newImage = TestFixture.createImage();
+		Image image = TestFixture.createImage();
 		Category newCategory = TestFixture.createCategory();
-		InfoPost infoPost = TestFixture.createInfoPostWithImage(oldImage);
+		InfoPost infoPost = TestFixture.createInfoPostWithImage(image);
 
 		given(infoPostRepository.findById(infoPostId)).willReturn(Optional.of(infoPost));
 		given(categoryService.findById(infoPostReq.categoryId())).willReturn(newCategory);
-		given(imageService.upload(Directory.INFORMATION, imgFile)).willReturn(newImage);
-		given(recruitmentPositionService.findPositionInfosByInfoPostId(infoPostId))
-			.willReturn(TestFixture.createMultiplePositionInfos());
 
 		// when
-		InfoPostDetailRes result = infoPostService.updateInfoPost(infoPostId, imgFile, infoPostReq, loginUser);
+		InfoPost result = infoPostService.updateInfoPostFields(infoPostId, infoPostReq, loginUser);
 
 		// then
 		assertThat(result).isNotNull();
-		verify(imageService).delete(oldImage);
-		verify(imageService).upload(Directory.INFORMATION, imgFile);
-		verify(recruitmentPositionService).updatePositions(infoPost, infoPostReq.positionInfos());
-	}
-
-	@Test
-	@DisplayName("공고 수정 성공 - 이미지 변경 없음")
-	void updateInfoPost_withoutNewImage_returnInfoPostDetailRes() {
-		// given
-		Long infoPostId = 1L;
-		InfoPostReq infoPostReq = TestFixture.createInfoPostReq();
-		User loginUser = TestFixture.createUser();
-		Category sameCategory = TestFixture.createCategory();
-		InfoPost infoPost = TestFixture.createInfoPost(infoPostReq, loginUser, TestFixture.createImage(), sameCategory);
-
-		given(infoPostRepository.findById(infoPostId)).willReturn(Optional.of(infoPost));
-		given(categoryService.findById(any())).willReturn(TestFixture.createCategory());
-		given(recruitmentPositionService.findPositionInfosByInfoPostId(infoPostId))
-			.willReturn(TestFixture.createMultiplePositionInfos());
-
-		// when
-		InfoPostDetailRes result = infoPostService.updateInfoPost(infoPostId, null, infoPostReq, loginUser);
-
-		// then
-		assertThat(result).isNotNull();
-		verify(imageService, never()).delete(any());
-		verify(imageService, never()).upload(any(), any());
 		verify(recruitmentPositionService).updatePositions(infoPost, infoPostReq.positionInfos());
 	}
 
@@ -316,7 +236,7 @@ public class InfoPostServiceTest {
 		given(infoPostRepository.findById(infoPostId)).willReturn(Optional.of(infoPost));
 
 		// when & then
-		assertThatThrownBy(() -> infoPostService.updateInfoPost(infoPostId, null, infoPostReq, unauthorizedUser))
+		assertThatThrownBy(() -> infoPostService.updateInfoPostFields(infoPostId, infoPostReq, unauthorizedUser))
 			.isInstanceOf(CustomException.class)
 			.hasMessage(ErrorCode.NO_INFO_POST_UPDATE_PERMISSION.getMessage());
 	}

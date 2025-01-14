@@ -6,7 +6,9 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum Directory {
-	INFORMATION("info-posts"), RECRUITMENT("recruit-posts");
+	INFORMATION("info-posts"),
+	RECRUITMENT("recruit-posts"),
+	FEATURE("featured-posts");
 
 	private final String name;
 }

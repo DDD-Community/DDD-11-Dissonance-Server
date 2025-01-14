@@ -56,6 +56,7 @@ public class TestFixture {
 	public static Image createImage() {
 		return Image.builder()
 			.id(5L)
+			.imageUrl("www.image.com")
 			.build();
 	}
 
@@ -83,6 +84,16 @@ public class TestFixture {
 			.image(image)
 			.category(category)
 			.author(author)
+			.build();
+	}
+
+	public static InfoPost createInfoPostWithoutImage() {
+		return InfoPost.builder()
+			.id(10L)
+			.title("Post 10")
+			.image(createImage())
+			.author(createUser())
+			.category(createCategory())
 			.build();
 	}
 
