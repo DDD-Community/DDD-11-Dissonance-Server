@@ -33,9 +33,7 @@ public class FeaturedPostContorller {
 		return ApiResponse.success(featuredPostRes);
 	}
 
-	// TODO: 관리자 권한만 수정 권한 있도록
-	@PutMapping(value = "{featuredPostId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE,
-		MediaType.APPLICATION_JSON_VALUE})
+	@PutMapping(value = "{featuredPostId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	@Operation(summary = "추천 게시글 수정", description = "추천 게시글을 수정합니다.")
 	public ApiResponse<FeaturedPostRes> updateFeaturedPost(@PathVariable Integer featuredPostId,
 		@RequestPart MultipartFile imgFile, @RequestParam Long infoPostId) {

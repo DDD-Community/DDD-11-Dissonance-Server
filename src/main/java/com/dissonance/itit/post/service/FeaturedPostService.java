@@ -33,10 +33,10 @@ public class FeaturedPostService {
 	@Transactional
 	public FeaturedPostRes updateFeaturedPost(Integer featuredPostId, MultipartFile imgFile, Long infoPostId) {
 		FeaturedPost featuredPost = findById(featuredPostId);
-
 		InfoPost infoPost = infoPostService.findById(infoPostId);
 
-		String bannerImgUrl = imageService.uploadAndGetImgPath(Directory.INFORMATION, imgFile);
+		// TODO: Image 객체 매핑으로 변경
+		String bannerImgUrl = imageService.uploadAndGetImgPath(Directory.FEATURE, imgFile);
 
 		featuredPost.update(infoPost, bannerImgUrl);
 
