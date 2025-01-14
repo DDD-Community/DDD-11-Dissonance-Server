@@ -118,4 +118,9 @@ public class InfoPostService {
 
 		return infoPostRepositorySupport.findInfoPostsByKeyword(keyword, pageable);
 	}
+
+	@Transactional
+	public void updateImage(InfoPost infoPost, Image image) {
+		infoPostRepository.updateImage(infoPost.getId(), image);
+	}
 }

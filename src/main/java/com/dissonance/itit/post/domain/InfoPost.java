@@ -90,10 +90,6 @@ public class InfoPost extends BaseTime {
 	@JoinColumn(name = "category_id")
 	private Category category;
 
-	public void updateImage(Image newImage) {
-		this.image = newImage;
-	}
-
 	public void update(InfoPostUpdateReq updateReq) {
 		this.category = updateReq.category();
 		this.title = updateReq.title();

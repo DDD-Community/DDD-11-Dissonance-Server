@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.dissonance.itit.global.common.exception.CustomException;
+import com.dissonance.itit.global.common.exception.ErrorCode;
 import com.dissonance.itit.image.domain.Directory;
 import com.dissonance.itit.image.domain.Image;
 import com.dissonance.itit.image.service.ImageService;
@@ -26,38 +28,57 @@ public class InfoPostFacade {
 	private final InfoPostService infoPostService;
 	private final RecruitmentPositionService recruitmentPositionService;
 
-	@Transactional
 	public InfoPostDetailRes updateInfoPostAndImg(Long infoPostId, MultipartFile imgFile, InfoPostReq infoPostReq,
 		User loginUser) {
+		// 1. DB 작업: 게시글 필드 업데이트
 		InfoPost infoPost = infoPostService.updateInfoPostFields(infoPostId, infoPostReq, loginUser);
 		List<String> positionInfos = recruitmentPositionService.findPositionInfosByInfoPostId(infoPostId);
 
+		// 2. 이미지 처리: S3 작업은 트랜잭션 외부에서 관리
 		if (imgFile != null) {
-			Image uploadedImage = imageService.updateImage(imgFile, infoPost);
-			infoPost.updateImage(uploadedImage);
+			try {
+				Image oldImage = infoPost.getImage();
+				Image newImage = imageService.upload(Directory.INFORMATION, imgFile);
+
+				// DB에 이미지 정보 반영
+				infoPostService.updateImage(infoPost, newImage);
+
+				// 이전 이미지 삭제는 DB 업데이트 후 처리
+				imageService.delete(oldImage);
+			} catch (Exception e) {
+				throw new CustomException(ErrorCode.IMAGE_UPDATE_FAILED);
+			}
 		}
 
 		return InfoPostDetailRes.of(infoPost, positionInfos);
 	}
 
-	@Transactional
 	public InfoPostCreateRes createInfoPost(MultipartFile imgFile, InfoPostReq infoPostReq, User author) {
+		// 이미지 업로드
 		Image image = imageService.upload(Directory.INFORMATION, imgFile);
 
-		InfoPost infoPost = infoPostService.saveInfoPost(infoPostReq, author, image);
+		try {
+			// DB에 게시글 저장
+			InfoPost infoPost = infoPostService.saveInfoPost(infoPostReq, author, image);
+			recruitmentPositionService.addPositions(infoPost, infoPostReq.positionInfos());
 
-		recruitmentPositionService.addPositions(infoPost, infoPostReq.positionInfos());
+			return InfoPostCreateRes.of(infoPost);
+		} catch (Exception ex) {
+			imageService.delete(image); // 공고 업로드 중 DB 오류 발생 시, 업로드된 이미지 삭제
 
-		return InfoPostCreateRes.of(infoPost);
+			throw new CustomException(ErrorCode.POST_CREATION_FAILED);
+		}
 	}
 
 	@Transactional
 	public void deleteInfoPostById(Long infoPostId) {
 		InfoPost infoPost = infoPostService.findById(infoPostId);
 
-		imageService.delete(infoPost.getImage());
-
+		// 1. DB 데이터 먼저 삭제
 		infoPostService.deleteInfoPostById(infoPostId);
+
+		// 2. DB 삭제 성공 후 이미지 삭제
+		imageService.delete(infoPost.getImage());
 	}
 
 	@Transactional(readOnly = true)

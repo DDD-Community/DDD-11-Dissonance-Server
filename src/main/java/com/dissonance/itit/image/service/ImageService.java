@@ -120,9 +120,12 @@ public class ImageService {
 	 */
 	@Transactional
 	public void delete(Image image) {
-		amazonS3Client.deleteObject(bucket, image.getDirectory().getName() + "/" + image.getConvertImageName());
-
-		imageRepository.deleteById(image.getId());
+		try {
+			amazonS3Client.deleteObject(bucket, image.getDirectory().getName() + "/" + image.getConvertImageName());
+			imageRepository.deleteById(image.getId());
+		} catch (Exception e) {
+			log.error("이미지 삭제 실패. 이미지 ID: {}", image.getId(), e);
+		}
 	}
 
 	/**

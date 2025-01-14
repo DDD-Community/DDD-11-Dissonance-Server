@@ -32,7 +32,11 @@ public enum ErrorCode {
 
 	// 500
 	IO_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "파일 입출력 에러"),
-	INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러");
+	INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러"),
+	POST_CREATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "DB 오류로 게시글 생성에 실패했습니다."),
+
+	// 503
+	IMAGE_UPDATE_FAILED(HttpStatus.SERVICE_UNAVAILABLE, "이미지 서버가 일시적으로 요청을 처리할 수 없습니다.");
 
 	private final HttpStatus httpStatus;
 	private final String message;
