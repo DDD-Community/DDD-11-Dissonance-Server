@@ -9,7 +9,7 @@ import com.dissonance.itit.global.common.exception.ErrorCode;
 
 public class DateUtil {
 	public static LocalDate stringToDate(String dateString) {
-		if (dateString == null) {
+		if (dateString.isEmpty()) {
 			return null;
 		}
 
