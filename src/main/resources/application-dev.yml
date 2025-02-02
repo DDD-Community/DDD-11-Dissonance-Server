@@ -35,6 +35,9 @@ logging:
       hibernate:
         type: debug
         stat: debug
+        orm:
+          jdbc:
+            bind: trace
   discord:
     webhook-url: ${DISCORD_WEBHOOK_URL}
 
