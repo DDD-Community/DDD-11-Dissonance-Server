@@ -20,7 +20,9 @@ import com.dissonance.itit.recruitmentPosition.service.RecruitmentPositionServic
 import com.dissonance.itit.user.domain.User;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class InfoPostFacade {
@@ -65,6 +67,8 @@ public class InfoPostFacade {
 
 			return InfoPostCreateRes.of(infoPost);
 		} catch (Exception ex) {
+			log.error(ex.getMessage());
+			ex.printStackTrace();
 			imageService.delete(image); // 공고 업로드 중 DB 오류 발생 시, 업로드된 이미지 삭제
 
 			throw new CustomException(ErrorCode.POST_CREATION_FAILED);
