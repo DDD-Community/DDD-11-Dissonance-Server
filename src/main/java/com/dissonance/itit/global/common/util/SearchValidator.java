@@ -23,7 +23,7 @@ public class SearchValidator {
 
 	public static void validateSearchKeyword(String keyword) {
 		// 1. 기본 길이 검증
-		if (!hasText(keyword) || keyword.length() < 2 || keyword.length() > 100) {
+		if (!hasText(keyword) || keyword.length() > 100) {
 			throw new CustomException(ErrorCode.INVALID_SEARCH_KEYWORD_LENGTH);
 		}
 
