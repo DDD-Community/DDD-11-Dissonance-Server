@@ -18,8 +18,10 @@ public enum ErrorCode {
 	INVALID_SEARCH_KEYWORD_SPECIAL_CHAR(HttpStatus.BAD_REQUEST, "검색어에 허용되지 않는 특수문자가 포함되어 있습니다."),
 	INVALID_SEARCH_KEYWORD_SQL_INJECTION(HttpStatus.BAD_REQUEST, "검색어에 사용할 수 없는 예약어가 포함되어 있습니다."),
 
+	// 401
+	UNAUTHORIZED_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "권한없는 Refresh Token입니다."),
+
 	// 403
-	UNAUTHORIZED_REFRESH_TOKEN(HttpStatus.FORBIDDEN, "권한없는 Refresh Token입니다."),
 	NO_INFO_POST_UPDATE_PERMISSION(HttpStatus.FORBIDDEN, "게시글 수정 권한이 없습니다."),
 
 	// 404
