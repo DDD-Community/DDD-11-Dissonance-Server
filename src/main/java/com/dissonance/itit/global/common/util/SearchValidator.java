@@ -1,7 +1,5 @@
 package com.dissonance.itit.global.common.util;
 
-import static org.springframework.util.StringUtils.*;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -23,7 +21,7 @@ public class SearchValidator {
 
 	public static void validateSearchKeyword(String keyword) {
 		// 1. 기본 길이 검증
-		if (!hasText(keyword) || keyword.length() > 100) {
+		if (keyword.length() > 100) {
 			throw new CustomException(ErrorCode.INVALID_SEARCH_KEYWORD_LENGTH);
 		}
 
