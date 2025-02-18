@@ -1,6 +1,5 @@
 package com.dissonance.itit.post.domain;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -35,7 +34,7 @@ public class FeaturedPost {
 	@Column(name = "banner_image_url")
 	private String bannerImageUrl;
 
-	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "info_post_id")
 	private InfoPost infoPost;
 
