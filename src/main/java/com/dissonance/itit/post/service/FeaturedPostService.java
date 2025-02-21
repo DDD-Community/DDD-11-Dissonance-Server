@@ -14,6 +14,7 @@ import com.dissonance.itit.post.domain.FeaturedPost;
 import com.dissonance.itit.post.domain.InfoPost;
 import com.dissonance.itit.post.dto.response.FeaturedPostRes;
 import com.dissonance.itit.post.repository.FeaturedPostRepository;
+import com.dissonance.itit.post.repository.FeaturedPostRepositorySupport;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,13 +22,14 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class FeaturedPostService {
 	private final FeaturedPostRepository featuredPostRepository;
+	private final FeaturedPostRepositorySupport featuredPostRepositorySupport;
+
 	private final InfoPostService infoPostService;
 	private final ImageService imageService;
 
 	@Transactional(readOnly = true)
 	public List<FeaturedPostRes> getFeaturedPost() {
-		List<FeaturedPost> featuredPosts = featuredPostRepository.findAll();
-		return FeaturedPostRes.of(featuredPosts);
+		return featuredPostRepositorySupport.findAll();
 	}
 
 	@Transactional
