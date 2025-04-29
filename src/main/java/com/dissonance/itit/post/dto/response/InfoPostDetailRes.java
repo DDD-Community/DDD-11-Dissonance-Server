@@ -17,13 +17,14 @@ public class InfoPostDetailRes {
 	private final String title;
 	private final String categoryName;
 	private final String organization;
-	private final String RecruitmentPeriod;
+	private final String recruitmentPeriod;
 	private final List<String> positionInfos;
 	private final String activityPeriod;
 	private final String content;
 	private final String detailUrl;
 	private final Integer viewCount;
 	private final String imageUrl;
+	private final Boolean isBookmarked;
 
 	@Getter
 	@AllArgsConstructor
@@ -38,15 +39,15 @@ public class InfoPostDetailRes {
 		private String content;
 		private String detailUrl;
 		private Integer viewCount;
-		private final String imageUrl;
+		private String imageUrl;
 	}
 
-	public static InfoPostDetailRes of(InfoPostInfo infoPostInfo, List<String> positionInfos) {
+	public static InfoPostDetailRes of(InfoPostInfo infoPostInfo, List<String> positionInfos, boolean isBookmarked) {
 		return InfoPostDetailRes.builder()
 			.title(infoPostInfo.getTitle())
 			.categoryName(infoPostInfo.getCategoryName())
 			.organization(infoPostInfo.getOrganization())
-			.RecruitmentPeriod(
+			.recruitmentPeriod(
 				formatPeriod(infoPostInfo.getRecruitmentStartDate(), infoPostInfo.getRecruitmentEndDate()))
 			.positionInfos(positionInfos)
 			.activityPeriod(
@@ -55,6 +56,7 @@ public class InfoPostDetailRes {
 			.detailUrl(infoPostInfo.getDetailUrl())
 			.imageUrl(infoPostInfo.getImageUrl())
 			.viewCount(infoPostInfo.getViewCount())
+			.isBookmarked(isBookmarked)
 			.build();
 	}
 
@@ -63,7 +65,7 @@ public class InfoPostDetailRes {
 			.title(infoPost.getTitle())
 			.categoryName(infoPost.getCategory().getName())
 			.organization(infoPost.getOrganization())
-			.RecruitmentPeriod(
+			.recruitmentPeriod(
 				formatPeriod(infoPost.getRecruitmentStartDate(), infoPost.getRecruitmentEndDate()))
 			.positionInfos(positionInfos)
 			.activityPeriod(
@@ -72,6 +74,7 @@ public class InfoPostDetailRes {
 			.detailUrl(infoPost.getDetailUrl())
 			.imageUrl(infoPost.getImage().getImageUrl())
 			.viewCount(infoPost.getViewCount())
+			.isBookmarked(null)
 			.build();
 	}
 }
