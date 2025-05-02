@@ -19,6 +19,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import com.dissonance.itit.bookmark.repository.BookmarkRepository;
 import com.dissonance.itit.fixture.TestFixture;
 import com.dissonance.itit.global.common.exception.CustomException;
 import com.dissonance.itit.global.common.exception.ErrorCode;
@@ -49,6 +50,8 @@ public class InfoPostServiceTest {
 	private CategoryService categoryService;
 	@Mock
 	private RecruitmentPositionService recruitmentPositionService;
+	@Mock
+	private BookmarkRepository bookmarkRepository;
 
 	@Test
 	@DisplayName("공고 생성 성공")
@@ -73,8 +76,8 @@ public class InfoPostServiceTest {
 	}
 
 	@Test
-	@DisplayName("공고 상세 조회 성공")
-	void getInfoPostDetailById_returnInfoPostDetailRes() {
+	@DisplayName("공고 상세 조회 성공 - 로그인 X")
+	void getInfoPostDetailById_returnInfoPostDetailRes_WhenNonUser() {
 		// given
 		Long infoPostId = 1L;
 		InfoPostDetailRes.InfoPostInfo infoPostInfo = new InfoPostDetailRes.InfoPostInfo(
@@ -89,12 +92,43 @@ public class InfoPostServiceTest {
 		given(recruitmentPositionService.findPositionInfosByInfoPostId(infoPostId)).willReturn(positionInfos);
 
 		// when
-		InfoPostDetailRes result = infoPostService.getInfoPostDetailById(infoPostId);
+		InfoPostDetailRes result = infoPostService.getInfoPostDetailById(infoPostId, null);
 
 		// then
 		assertThat(result.getTitle()).isEqualTo(infoPostInfo.getTitle());
 		assertThat(result.getContent()).isEqualTo(infoPostInfo.getContent());
 		assertThat(result.getPositionInfos()).isEqualTo(positionInfos);
+		assertThat(result.getIsBookmarked()).isFalse();
+		verifyNoInteractions(bookmarkRepository);
+	}
+
+	@Test
+	@DisplayName("공고 상세 조회 성공 - 로그인 O")
+	void getInfoPostDetailById_returnInfoPostDetailRes_WhenUser() {
+		// given
+		Long infoPostId = 1L;
+		Long userId = 223L;
+		InfoPostDetailRes.InfoPostInfo infoPostInfo = new InfoPostDetailRes.InfoPostInfo(
+			"Title", "Category", "Organization",
+			LocalDate.now(), LocalDate.now().plusDays(5),
+			LocalDate.now(), LocalDate.now().plusMonths(1),
+			"Content", "www.detailUrl.com", 100, "www.imageUrl.com");
+
+		List<String> positionInfos = TestFixture.createMultiplePositionInfos();
+
+		given(infoPostRepositorySupport.findInfoPostWithDetails(infoPostId)).willReturn(infoPostInfo);
+		given(recruitmentPositionService.findPositionInfosByInfoPostId(infoPostId)).willReturn(positionInfos);
+		given(bookmarkRepository.existsByUserIdAndPostId(infoPostId, userId)).willReturn(true);
+
+		// when
+		InfoPostDetailRes result = infoPostService.getInfoPostDetailById(infoPostId, userId);
+
+		// then
+		assertThat(result.getTitle()).isEqualTo(infoPostInfo.getTitle());
+		assertThat(result.getContent()).isEqualTo(infoPostInfo.getContent());
+		assertThat(result.getPositionInfos()).isEqualTo(positionInfos);
+		assertThat(result.getIsBookmarked()).isTrue();
+		verify(bookmarkRepository).existsByUserIdAndPostId(infoPostId, userId);
 	}
 
 	@Test
@@ -105,7 +139,7 @@ public class InfoPostServiceTest {
 		given(infoPostRepositorySupport.findInfoPostWithDetails(infoPostId)).willReturn(null);
 
 		// when & then
-		assertThatThrownBy(() -> infoPostService.getInfoPostDetailById(infoPostId))
+		assertThatThrownBy(() -> infoPostService.getInfoPostDetailById(infoPostId, null))
 			.isInstanceOf(CustomException.class)
 			.hasMessage(ErrorCode.NON_EXISTENT_INFO_POST_ID.getMessage());
 	}

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dissonance.itit.global.common.util.ApiResponse;
+import com.dissonance.itit.global.security.auth.UserContext;
 import com.dissonance.itit.post.dto.response.InfoPostDetailRes;
 import com.dissonance.itit.post.dto.response.InfoPostRes;
 import com.dissonance.itit.post.service.InfoPostService;
@@ -21,11 +22,13 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/info-posts")
 public class InfoPostController {
 	private final InfoPostService infoPostService;
+	private final UserContext userContext;
 
 	@GetMapping("/{infoPostId}")
 	@Operation(summary = "공고 게시글 조회", description = "공고 게시글을 상세 조회합니다.")
 	public ApiResponse<InfoPostDetailRes> getInfoPostDetail(@PathVariable Long infoPostId) {
-		InfoPostDetailRes infoPostDetailRes = infoPostService.getInfoPostDetailById(infoPostId);
+		Long userId = userContext.getUserId();
+		InfoPostDetailRes infoPostDetailRes = infoPostService.getInfoPostDetailById(infoPostId, userId);
 		return ApiResponse.success(infoPostDetailRes);
 	}
 

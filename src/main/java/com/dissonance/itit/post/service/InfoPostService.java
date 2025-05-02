@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.dissonance.itit.bookmark.repository.BookmarkRepository;
 import com.dissonance.itit.global.common.exception.CustomException;
 import com.dissonance.itit.global.common.exception.ErrorCode;
 import com.dissonance.itit.global.common.util.SearchValidator;
@@ -34,6 +35,7 @@ public class InfoPostService {
 
 	private final CategoryService categoryService;
 	private final RecruitmentPositionService recruitmentPositionService;
+	private final BookmarkRepository bookmarkRepository;
 
 	@Transactional
 	public InfoPost saveInfoPost(InfoPostReq infoPostReq, User author, Image image) {
@@ -43,7 +45,7 @@ public class InfoPostService {
 	}
 
 	@Transactional(readOnly = true)
-	public InfoPostDetailRes getInfoPostDetailById(Long infoPostId) {
+	public InfoPostDetailRes getInfoPostDetailById(Long infoPostId, Long userId) {
 		InfoPostInfo infoPostInfo = infoPostRepositorySupport.findInfoPostWithDetails(infoPostId);
 
 		if (infoPostInfo == null) {
@@ -52,7 +54,12 @@ public class InfoPostService {
 
 		List<String> positionInfos = recruitmentPositionService.findPositionInfosByInfoPostId(infoPostId);
 
-		return InfoPostDetailRes.of(infoPostInfo, positionInfos);
+		boolean isBookmarked = false;
+		if (userId != null) {
+			isBookmarked = bookmarkRepository.existsByUserIdAndPostId(infoPostId, userId);
+		}
+
+		return InfoPostDetailRes.of(infoPostInfo, positionInfos, isBookmarked);
 	}
 
 	@Transactional(readOnly = true)
