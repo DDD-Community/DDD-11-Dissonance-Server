@@ -23,7 +23,7 @@ public class BookmarkController {
 	@PostMapping("{infoPostId}/toggle")
 	@Operation(summary = "북마크 토글", description = "북마크를 추가/삭제합니다.")
 	public ApiResponse<BookmarkToggleRes> toggleBookmark(@PathVariable Long infoPostId) {
-		BookmarkToggleRes bookmarkToggleRes = bookmarkService.toggleBookmark(infoPostId, userContext.getUserId());
+		BookmarkToggleRes bookmarkToggleRes = bookmarkService.toggleBookmark(userContext.getUserId(), infoPostId);
 		return ApiResponse.success(bookmarkToggleRes);
 	}
 }

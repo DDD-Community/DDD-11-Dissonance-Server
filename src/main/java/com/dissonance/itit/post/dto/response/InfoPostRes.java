@@ -15,6 +15,7 @@ public class InfoPostRes {
 	private final String title;
 	private final String remainingDays;
 	private final Integer viewCount;
+	private final Long bookmarkCount;
 
 	public static List<InfoPostRes> of(List<InfoPostInfo> postInfos) {
 		return postInfos.stream()
@@ -24,6 +25,7 @@ public class InfoPostRes {
 				.title(postInfo.title())
 				.remainingDays(calculateRemainingDays(postInfo.deadline()))
 				.viewCount(postInfo.viewCount())
+				.bookmarkCount(postInfo.bookmarkCount())
 				.build())
 			.toList();
 	}
@@ -46,6 +48,7 @@ public class InfoPostRes {
 		String imgUrl,
 		String title,
 		LocalDate deadline,
-		Integer viewCount) {
+		Integer viewCount,
+		Long bookmarkCount) {
 	}
 }
