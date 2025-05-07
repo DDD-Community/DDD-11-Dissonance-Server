@@ -1,5 +1,7 @@
 package com.dissonance.itit.post.repository;
 
+import static com.dissonance.itit.bookmark.domain.QBookmark.*;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -66,15 +68,22 @@ public class InfoPostRepositorySupport {
 					infoPost.image.imageUrl,
 					infoPost.title,
 					infoPost.recruitmentEndDate,
-					infoPost.viewCount))
+					infoPost.viewCount,
+					bookmark.id.count()))
 			.from(infoPost)
+			.leftJoin(bookmark).on(bookmarkPostIdEq())
 			.where(buildCategoryCondition(categoryId))
+			.groupBy(infoPost.id)
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
 			.orderBy(buildOrderSpecifiers(pageable.getSort()))
 			.fetch();
 
 		return paginateInfoPostsByCategory(categoryId, InfoPostRes.of(postInfos), pageable);
+	}
+
+	private BooleanExpression bookmarkPostIdEq() {
+		return bookmark.post.id.eq(infoPost.id);
 	}
 
 	public OrderSpecifier<?>[] buildOrderSpecifiers(Sort sort) {
@@ -164,9 +173,12 @@ public class InfoPostRepositorySupport {
 					infoPost.image.imageUrl,
 					infoPost.title,
 					infoPost.recruitmentEndDate,
-					infoPost.viewCount))
+					infoPost.viewCount,
+					bookmark.id.count()))
 			.from(infoPost)
+			.leftJoin(bookmark).on(bookmarkPostIdEq())
 			.where(buildKeywordMatchCondition(keyword))
+			.groupBy(infoPost.id)
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
 			.orderBy(buildOrderSpecifiers(pageable.getSort()))

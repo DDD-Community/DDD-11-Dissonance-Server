@@ -1,6 +1,7 @@
-package com.dissonance.itit.post.dto.response;
+package com.dissonance.itit.bookmark.dto;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
@@ -9,25 +10,25 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class InfoPostRes {
-	private final Long id;
-	private final String imgUrl;
+public class BookmarkRes {
+	private final Long postId;
 	private final String title;
 	private final String remainingDays;
-	private final Integer viewCount;
-	private final Long bookmarkCount;
+	private final String deadLine;
 
-	public static List<InfoPostRes> of(List<InfoPostInfo> postInfos) {
-		return postInfos.stream()
-			.map(postInfo -> InfoPostRes.builder()
-				.id(postInfo.id())
-				.imgUrl(postInfo.imgUrl())
+	public static List<BookmarkRes> of(List<BookmarkRes.BookmarkedPost> bookmarkedPosts) {
+		return bookmarkedPosts.stream()
+			.map(postInfo -> BookmarkRes.builder()
+				.postId(postInfo.postId())
 				.title(postInfo.title())
 				.remainingDays(calculateRemainingDays(postInfo.deadline()))
-				.viewCount(postInfo.viewCount())
-				.bookmarkCount(postInfo.bookmarkCount())
+				.deadLine(parseDeadLine(postInfo.deadline()))
 				.build())
 			.toList();
+	}
+
+	private static String parseDeadLine(LocalDate deadline) {
+		return deadline.format(DateTimeFormatter.ofPattern("MM월 dd일 마감"));
 	}
 
 	private static String calculateRemainingDays(LocalDate deadline) {
@@ -43,12 +44,9 @@ public class InfoPostRes {
 		}
 	}
 
-	public record InfoPostInfo(
-		Long id,
-		String imgUrl,
+	public record BookmarkedPost(
+		Long postId,
 		String title,
-		LocalDate deadline,
-		Integer viewCount,
-		Long bookmarkCount) {
+		LocalDate deadline) {
 	}
 }
