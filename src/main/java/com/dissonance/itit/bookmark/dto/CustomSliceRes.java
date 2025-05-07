@@ -16,4 +16,4 @@ public class CustomSliceRes<T> {
 	public static <T> CustomSliceRes<T> from(Slice<T> slice) {
 		return new CustomSliceRes<>(slice.hasNext(), slice.getContent());
 	}
-}발
+}
