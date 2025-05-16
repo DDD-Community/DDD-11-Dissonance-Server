@@ -56,7 +56,7 @@ public class InfoPostService {
 
 		boolean isBookmarked = false;
 		if (userId != null) {
-			isBookmarked = bookmarkRepository.existsByUserIdAndPostId(infoPostId, userId);
+			isBookmarked = bookmarkRepository.existsByUserIdAndPostId(userId, infoPostId);
 		}
 
 		return InfoPostDetailRes.of(infoPostInfo, positionInfos, isBookmarked);

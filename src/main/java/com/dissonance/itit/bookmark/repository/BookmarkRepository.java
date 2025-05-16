@@ -9,7 +9,7 @@ import com.dissonance.itit.bookmark.domain.Bookmark;
 
 @Repository
 public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
-	boolean existsByUserIdAndPostId(Long infoPostId, Long userId);
+	boolean existsByUserIdAndPostId(Long userId, Long postId);
 
 	Optional<Bookmark> findByUserIdAndPostId(Long userId, Long postId);
 }
